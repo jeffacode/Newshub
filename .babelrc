@@ -1,0 +1,19 @@
+{
+  "sourceMaps": true,
+  "presets": ["@babel/preset-env", "@babel/preset-react"],
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "root": ["./src"]
+      }
+    ],
+    [
+      "import",
+      {
+        "libraryName": "antd",
+        "libraryDirectory": "es"
+      }
+    ]
+  ]
+}

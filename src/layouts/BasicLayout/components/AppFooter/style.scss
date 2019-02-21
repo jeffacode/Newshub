@@ -1,0 +1,10 @@
+@import 'styles/helpers';
+
+.appFooter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  margin: 48px 0 24px;
+  color: $font-color-secondary;
+}

@@ -1,0 +1,43 @@
+@import 'styles/helpers';
+
+.appSider {
+  z-index: 1;
+  display: flex;
+  // display: -webkit-box;
+  // display: -ms-flexbox;
+  flex-direction: column;
+  // -webkit-box-orient: vertical;
+  // -webkit-box-direction: normal;
+  // -ms-flex-direction: column;
+  width: 256px;
+  height: 100%;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, .15);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    background: #002140;
+    height: 64px;
+    padding-left: 24px;
+  }
+
+  &__body {
+    flex: 1;
+    // box-flex: 1;
+    // -webkit-box-flex: 1;
+    // -ms-flex: 1;
+    background: #001529;
+  }
+
+  &__logo {
+    height: 32px;
+    width: 32px;
+    margin-right: 12px;
+  }
+
+  &__appName {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 20px;
+  }
+}

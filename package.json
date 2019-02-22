@@ -50,7 +50,7 @@
     "postcss": "^7.0.14",
     "postcss-loader": "^3.0.0",
     "postcss-sprites": "^4.2.1",
-    "react-hot-loader": "^4.6.5",
+    "react-hot-loader": "^4.7.1",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
     "url-loader": "^1.1.2",
@@ -59,6 +59,7 @@
     "webpack-dev-server": "^3.1.14"
   },
   "dependencies": {
+    "@hot-loader/react-dom": "^16.8.2",
     "antd": "^3.13.2",
     "axios": "^0.18.0",
     "classnames": "^2.2.6",

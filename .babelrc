@@ -16,6 +16,7 @@
         "libraryName": "antd",
         "libraryDirectory": "es"
       }
-    ]
-  ]
+    ],
+    "react-hot-loader/babel"
+  ],
 }

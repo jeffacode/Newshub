@@ -1,11 +1,11 @@
 import React from 'react';
-import { Consumer } from './IntlContext';
+import IntlContext from './IntlContext';
 
 const injectIntl = (WrappedComponent) => {
   const InjectIntl = props => (
-    <Consumer>
+    <IntlContext.Consumer>
       {value => <WrappedComponent {...props} intl={value} />}
-    </Consumer>
+    </IntlContext.Consumer>
   );
 
   return InjectIntl;

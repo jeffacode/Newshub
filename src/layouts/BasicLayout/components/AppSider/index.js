@@ -19,7 +19,6 @@ const { SubMenu } = Menu;
 class AppSider extends Component {
   constructor(props) {
     super(props);
-
     const { url } = props;
     this.menuData = this.formatMenuData(menuData);
     // 调用时menuData不变就不会重新计算

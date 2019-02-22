@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import replaceVariables from './utils/replaceVariables';
-import { Provider } from './IntlContext';
+import IntlContext from './IntlContext';
 
 class IntlProvider extends Component {
   constructor(props) {
@@ -54,9 +54,9 @@ class IntlProvider extends Component {
     };
 
     return (
-      <Provider value={value}>
+      <IntlContext.Provider value={value}>
         {children}
-      </Provider>
+      </IntlContext.Provider>
     );
   }
 }

@@ -1,12 +1,9 @@
 import React from 'react';
 
-const { Provider, Consumer } = React.createContext({
+const IntlContext = React.createContext({
   locale: '',
   localeMessages: {},
   formatMessage: () => {},
 });
 
-export {
-  Provider,
-  Consumer,
-};
+export default IntlContext;

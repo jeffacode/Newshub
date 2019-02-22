@@ -15,7 +15,7 @@ const pkg = require('./package.json');
 const ENV = process.env.NODE_ENV || 'development';
 const IS_PROD = ENV === 'production';
 const VERSION = `v${pkg.version}`;
-const ASSET_PATH = process.env.ASSET_PATH || '/';
+const ASSET_PATH = process.env.ASSET_PATH || '/'; // 可以改成放置静态资源的CDN地址
 const SOURCE_DIR = path.resolve(__dirname, 'src');
 const OUTPUT_DIR = path.resolve(__dirname, 'build');
 const CLIENT_DIR = path.join(OUTPUT_DIR, VERSION);
@@ -49,6 +49,9 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx', '.json'],
+    alias: {
+      'react-dom': '@hot-loader/react-dom',
+    },
   },
   module: {
     rules: [
@@ -200,14 +203,15 @@ module.exports = {
     new CleanWebpackPlugin(OUTPUT_DIR),
     new webpack.HotModuleReplacementPlugin(),
   ],
-  devtool: IS_PROD ? 'source-map' : 'eval-source-map',
+  devtool: IS_PROD ? 'cheap-module-source-map' : 'cheap-module-eval-source-map',
   devServer: {
     port: process.env.PORT || 8080,
     host: 'localhost',
     publicPath: '/',
     contentBase: SOURCE_DIR,
     historyApiFallback: true,
-    hot: true,
+    hot: true, // 开启热模块更新
+    hotOnly: true, // 即使热模块更新失败也不刷新页面
     overlay: true, // 将 ESLint 报错输出到控制台
   },
 };

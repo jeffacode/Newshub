@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import { withRouter } from 'react-router-dom';
 import { injectIntl } from 'components/IntlContext';
 import { connect } from 'react-redux';
 import Cookie from 'js-cookie';
@@ -12,7 +13,7 @@ import { getIsLogin, getLoginErrorMsg } from 'redux/modules/app/reducer';
 import logo from 'assets/logo.png';
 import './style.scss';
 
-class Login extends Component {
+class Signup extends Component {
   state = {
     username: '',
     password: '',
@@ -69,7 +70,7 @@ class Login extends Component {
           type="primary"
           onClick={this.handleLogin}
         >
-          {intl.formatMessage({ id: 'login' })}
+          {intl.formatMessage({ id: 'signup' })}
         </Button>
       </div>
     );
@@ -134,7 +135,7 @@ class Login extends Component {
   }
 }
 
-Login.propTypes = {
+Signup.propTypes = {
   loginErrorMsg: PropTypes.string.isRequired,
   login: PropTypes.func.isRequired,
   clearLoginErrorMsg: PropTypes.func.isRequired,
@@ -151,7 +152,7 @@ const mapDispatchToProps = {
   clearLoginErrorMsg,
 };
 
-export default injectIntl(connect(
+export default withRouter(injectIntl(connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Login));
+)(Signup)));

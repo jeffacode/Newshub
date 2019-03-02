@@ -1,5 +1,5 @@
 import axios from 'axios';
-import appConfig from 'containers/app/config/appConfig';
+import appConfig from 'app/config/appConfig';
 import {
   FETCH_DATA,
   POST_DATA,
@@ -44,24 +44,26 @@ const handleError = (asyncType, url, error) => {
 };
 
 export default {
-  get: url => (
-    instance.get(url)
+  get: (url, params) => (
+    instance.get(url, {
+      params,
+    })
       .then(handleResponse)
       .catch(error => handleError(FETCH_DATA, url, error))
   ),
   post: (url, data) => (
     instance.post(url, data)
       .then(handleResponse)
-      .catch(error => handleError(POST_DATA, error))
+      .catch(error => handleError(POST_DATA, url, error))
   ),
   patch: (url, data) => (
     instance.patch(url, data)
       .then(handleResponse)
-      .catch(error => handleError(CHANGE_DATA, error))
+      .catch(error => handleError(CHANGE_DATA, url, error))
   ),
   delete: url => (
     instance.delete(url)
       .then(handleResponse)
-      .catch(error => handleError(DELETE_DATA, error))
+      .catch(error => handleError(DELETE_DATA, url, error))
   ),
 };

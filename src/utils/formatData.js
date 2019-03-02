@@ -12,7 +12,6 @@ const formatData = (data, schema) => {
     return reduce(
       data,
       (result, item) => {
-        // eslint-disable-next-line no-param-reassign
         result[name][item[id]] = item;
         result.ids.push(item[id]);
         return result;

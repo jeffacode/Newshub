@@ -1,5 +1,19 @@
+@import "styles/helpers";
+
+body {
+  overflow-y: hidden;
+  overflow-x: scroll;
+}
+
+.ft-bold {
+  font-weight: 600;
+}
+
 $current: 5;
 @while $current <= 20 {
+  .mg-#{$current} {
+    margin: #{$current}px;
+  }
   .mt-#{$current} {
     margin-top: #{$current}px;
   }
@@ -12,5 +26,51 @@ $current: 5;
   .ml-#{$current} {
     margin-left: #{$current}px;
   }
+  .pd-#{$current} {
+    padding: #{$current}px;
+  }
+  .pt-#{$current} {
+    padding-top: #{$current}px;
+  }
+  .pr-#{$current} {
+    padding-right: #{$current}px;
+  }
+  .pb-#{$current} {
+    padding-bottom: #{$current}px;
+  }
+  .pl-#{$current} {
+    padding-left: #{$current}px;
+  }
   $current: $current + 5;
+}
+
+.ant-input {
+  background: $grey-2;
+
+  &:hover, &:focus {
+    border-color: $blue-7!important;
+    background: #fff;
+  }
+
+  &:focus {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+
+  &-prefix {
+    color: $grey-9;
+    font-size: $font-size-lg;
+  }
+}
+
+.ant-dropdown-menu {
+  &-item {
+    &:hover {
+      background: $grey-3;
+    }
+  }
+}
+
+.ant-menu {
+  border-right: none;
 }

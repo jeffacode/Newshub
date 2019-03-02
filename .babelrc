@@ -17,6 +17,6 @@
         "libraryDirectory": "es"
       }
     ],
-    "react-hot-loader/babel"
+    // "react-hot-loader/babel"
   ],
 }

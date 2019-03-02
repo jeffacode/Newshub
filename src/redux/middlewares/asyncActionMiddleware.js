@@ -29,7 +29,7 @@ const asyncActionMiddleware = () => next => (action) => {
   if (!types) {
     throw new Error('Types must be given.');
   }
-  if (asyncType === FETCH_DATA) {
+  if (asyncType === FETCH_DATA && withoutResponse) {
     if (!schema) {
       throw new Error('Entity schema must be given when fetching data.');
     } else {
@@ -93,7 +93,7 @@ const asyncActionMiddleware = () => next => (action) => {
 
   switch (asyncType) {
     case FETCH_DATA:
-      return request.get(url)
+      return request.get(url, data)
         .then(handleResponse)
         .catch(handleError);
     case POST_DATA:

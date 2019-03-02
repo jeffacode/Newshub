@@ -49,9 +49,9 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx', '.json'],
-    alias: {
-      'react-dom': '@hot-loader/react-dom',
-    },
+    // alias: {
+    //   'react-dom': '@hot-loader/react-dom',
+    // },
   },
   module: {
     rules: [
@@ -211,7 +211,7 @@ module.exports = {
     contentBase: SOURCE_DIR,
     historyApiFallback: true,
     hot: true, // 开启热模块更新
-    hotOnly: true, // 即使热模块更新失败也不刷新页面
+    // hotOnly: true, // 即使热模块更新失败也不刷新页面
     overlay: true, // 将 ESLint 报错输出到控制台
   },
 };

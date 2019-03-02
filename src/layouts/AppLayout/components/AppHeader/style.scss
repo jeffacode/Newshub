@@ -1,0 +1,206 @@
+@import "styles/helpers";
+
+.appHeader {
+  height: 50px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: $grey-1;
+  box-shadow: $shadow-1-down-light;
+
+  // 导航栏
+  &__navigator {
+    margin-top: 6px;
+    align-self: baseline;
+    background: #fff;
+    border-radius: $border-radius-base;
+
+    &:hover {
+      cursor: pointer;
+      box-shadow: 0 0 0 1px $grey-5;
+    }
+
+    &.show {
+      box-shadow: 0 0 0 1px $grey-5;
+    }
+  }
+
+  &__navigatorBar {
+    width: 220px;
+    height: 38px;
+    line-height: 38px;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+
+    &__content {
+      @include text-ellipsis;
+      padding-left: 15px;
+      flex: 1;
+      font-weight: 600;
+      color: $grey-8;
+    }
+  }
+
+  &__navigatorDropdown {
+    width: 220px;
+    max-height: 300px;
+    overflow: auto;
+
+    &__filter {
+      padding: 0 10px;
+    }
+
+    &__groupTitle {
+      height: 30px;
+      line-height: 30px;
+      padding: 0 10px;
+      font-size: $font-size-sm;
+      font-weight: 500;
+      text-transform: uppercase;
+      color: #8c8c8c;
+    }
+  }
+
+  &__navigatorDropdownItem {
+    height: 38px;
+    line-height: 38px;
+    display: flex;
+    align-items: center;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+
+    &:hover {
+      cursor: pointer;
+      background: $grey-3;
+    }
+
+    a {
+      flex: 1;
+      display: flex;
+    }
+
+    &__leftIcon, &__rightIcon {
+      width: 30px;
+      text-align: center;
+    }
+
+    &__content {
+      @include text-ellipsis;
+      flex: 1;
+      color: $grey-8;
+    }
+  }
+
+  // 搜索框
+  &__search {
+    width: 100%;
+    height: 40px;
+
+    &__container {
+      flex: 1;
+    }
+  }
+
+  &__headerGroup {
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &::before {
+      content: '';
+      display: inline-block;
+      border-left: 1px solid $grey-6;
+      padding: 9px 5px 9px 0;
+    }
+
+    &__title {
+      min-width: 30px;
+      padding-right: 5px;
+      line-height: 40px;
+      font-size: $font-size-sm;
+      text-align: center;
+      text-transform: uppercase;
+      color: $grey-8;
+    }
+
+    &__item {
+      min-width: 90px;
+      line-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+    }
+  }
+
+  // 切换视图
+  &__viewSwitch {
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  // 排序
+  &__sortSelector {
+    &__option {
+      display: flex;
+
+      &--selected {
+        display: flex;
+        font-size: $font-size-sm;
+        text-transform: uppercase;
+        color: $blue-7;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  // 提醒
+  &__notice {
+    border-radius: $border-radius-base;
+
+    &__container {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &__icon {
+      color: $grey-9;
+      font-size: $font-size-lg;
+    }
+  
+    &__item {
+      padding: 6px 6px;
+      width: 300px;
+  
+      &:hover {
+        cursor: pointer;
+        color: $grey-9;
+        background: $grey-3;
+      }
+    }
+  
+    &__title {
+      margin-bottom: 8px;
+    }
+  
+    &__message {
+      font-size: $font-size-sm;
+      color: $font-color-secondary;
+    }
+  
+    &__empty {
+      width: 300px;
+      padding: 12px 0;
+      text-align: center;
+    }
+  }
+}

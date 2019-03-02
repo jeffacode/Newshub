@@ -1,7 +1,28 @@
 import { combineReducers } from 'redux';
 import actionTypes from './actionTypes';
 
-const initalState = {
+export const views = [
+  {
+    id: 1,
+    name: 'appHeader_viewSwitch_card',
+    type: 'card',
+    icon: 'pic-center',
+  },
+  {
+    id: 2,
+    name: 'appHeader_viewSwitch_classic',
+    type: 'classic',
+    icon: 'pic-left',
+  },
+  {
+    id: 3,
+    name: 'appHeader_viewSwitch_compact',
+    type: 'compact',
+    icon: 'bars',
+  },
+];
+
+const initialState = {
   errorMsg: '', // 全局的请求错误提示
   login: {
     isLogin: false,
@@ -12,9 +33,18 @@ const initalState = {
     isFetching: false,
     ids: [],
   },
+  subscriptions: {
+    isFetching: false,
+    ids: [],
+  },
+  selectedView: views[0], // 初始选择card
+  navigatorBarContent: {
+    icon: 'robot',
+    title: '...',
+  },
 };
 
-const errorMsg = (state = initalState.errorMsg, action) => {
+const errorMsg = (state = initialState.errorMsg, action) => {
   if (action.type === actionTypes.clearErrorMsg) {
     return '';
   }
@@ -24,7 +54,7 @@ const errorMsg = (state = initalState.errorMsg, action) => {
   return state;
 };
 
-const login = (state = initalState.login, action) => {
+const login = (state = initialState.login, action) => {
   if (action.type === actionTypes.login.successType) {
     return {
       ...state,
@@ -52,18 +82,18 @@ const login = (state = initalState.login, action) => {
   return state;
 };
 
-const user = (state = initalState.user, action) => {
+const user = (state = initialState.user, action) => {
   switch (action.type) {
     case actionTypes.saveUser:
       return action.payload;
-    case actionTypes.removeUser:
+    case actionTypes.clearUser:
       return {};
     default:
       return state;
   }
 };
 
-const notices = (state = initalState.notices, action) => {
+const notices = (state = initialState.notices, action) => {
   switch (action.type) {
     case actionTypes.fetchNotices.requestType:
       return {
@@ -81,9 +111,50 @@ const notices = (state = initalState.notices, action) => {
         ...state,
         isFetching: false,
       };
+    case actionTypes.clearNotices:
+      return initialState.notices;
     default:
       return state;
   }
+};
+
+const subscriptions = (state = initialState.subscriptions, action) => {
+  switch (action.type) {
+    case actionTypes.fetchSubscriptions.requestType:
+      return {
+        ...state,
+        isFetching: true,
+      };
+    case actionTypes.fetchSubscriptions.successType:
+      return {
+        ...state,
+        isFetching: false,
+        ids: action.response.ids,
+      };
+    case actionTypes.fetchSubscriptions.failureType:
+      return {
+        ...state,
+        isFetching: false,
+      };
+    case actionTypes.clearSubscriptions:
+      return initialState.subscriptions;
+    default:
+      return state;
+  }
+};
+
+const selectedView = (state = initialState.selectedView, action) => {
+  if (action.type === actionTypes.selectView) {
+    return action.payload;
+  }
+  return state;
+};
+
+const navigatorBarContent = (state = initialState.navigatorBarContent, action) => {
+  if (action.type === actionTypes.setNavigatorBar) {
+    return action.payload;
+  }
+  return state;
 };
 
 const reducer = combineReducers({
@@ -91,6 +162,9 @@ const reducer = combineReducers({
   login,
   user,
   notices,
+  subscriptions,
+  selectedView,
+  navigatorBarContent,
 });
 
 export default reducer;
@@ -102,3 +176,8 @@ export const getLoginErrorMsg = state => state.app.login.loginErrorMsg;
 export const getUser = state => state.app.user;
 export const getNotices = state => state.app.notices.ids.map(id => state.entities.notices[id]);
 export const getIsFetchingNotices = state => state.app.notices.isFetching;
+export const getSubscriptions = state => state.app.subscriptions.ids.map(
+  id => state.entities.subscriptions[id],
+);
+export const getSelectedView = state => state.app.selectedView;
+export const getNavigatorBarContent = state => state.app.navigatorBarContent;

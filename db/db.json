@@ -1,138 +1,4 @@
 {
-  "outlets": [
-    {
-      "id": 1,
-      "name": "Starbucks",
-      "description": "3 Abc Street 7 #01-J4, XYZ Mall",
-      "imgSrc": "https://media.cntraveler.com/photos/5af4afcff535091186d4acbc/5:4/w_480,c_limit/GettyImages-522435114.jpg",
-      "hours": "Open 24 hours",
-      "phone": "1234 5678",
-      "categories": [
-        "Coffee",
-        "Cafes",
-        "Desert",
-        "Western"
-      ]
-    },
-    {
-      "id": 2,
-      "name": "Starbucks",
-      "description": "3 Abc Street 7 #01-J4, XYZ Mall",
-      "imgSrc": "https://media.cntraveler.com/photos/5af4afcff535091186d4acbc/5:4/w_480,c_limit/GettyImages-522435114.jpg",
-      "hours": "Open 24 hours",
-      "phone": "1234 5678",
-      "categories": [
-        "Coffee",
-        "Cafes",
-        "Desert",
-        "Western"
-      ]
-    },
-    {
-      "id": 3,
-      "name": "Starbucks",
-      "description": "3 Abc Street 7 #01-J4, XYZ Mall",
-      "imgSrc": "https://media.cntraveler.com/photos/5af4afcff535091186d4acbc/5:4/w_480,c_limit/GettyImages-522435114.jpg",
-      "hours": "Open 24 hours",
-      "phone": "1234 5678",
-      "categories": [
-        "Coffee",
-        "Cafes",
-        "Desert",
-        "Western"
-      ]
-    },
-    {
-      "id": 4,
-      "name": "Starbucks",
-      "description": "3 Abc Street 7 #01-J4, XYZ Mall",
-      "imgSrc": "https://media.cntraveler.com/photos/5af4afcff535091186d4acbc/5:4/w_480,c_limit/GettyImages-522435114.jpg",
-      "hours": "Open 24 hours",
-      "phone": "1234 5678",
-      "categories": [
-        "Coffee",
-        "Cafes",
-        "Desert",
-        "Western"
-      ]
-    },
-    {
-      "id": 5,
-      "name": "Starbucks",
-      "description": "3 Abc Street 7 #01-J4, XYZ Mall",
-      "imgSrc": "https://media.cntraveler.com/photos/5af4afcff535091186d4acbc/5:4/w_480,c_limit/GettyImages-522435114.jpg",
-      "hours": "Open 24 hours",
-      "phone": "1234 5678",
-      "categories": [
-        "Coffee",
-        "Cafes",
-        "Desert",
-        "Western"
-      ]
-    },
-    {
-      "id": 6,
-      "name": "Starbucks",
-      "description": "3 Abc Street 7 #01-J4, XYZ Mall",
-      "imgSrc": "https://media.cntraveler.com/photos/5af4afcff535091186d4acbc/5:4/w_480,c_limit/GettyImages-522435114.jpg",
-      "hours": "Open 24 hours",
-      "phone": "1234 5678",
-      "categories": [
-        "Coffee",
-        "Cafes",
-        "Desert",
-        "Western"
-      ]
-    },
-    {
-      "id": 7,
-      "name": "Starbucks",
-      "description": "3 Abc Street 7 #01-J4, XYZ Mall",
-      "imgSrc": "https://media.cntraveler.com/photos/5af4afcff535091186d4acbc/5:4/w_480,c_limit/GettyImages-522435114.jpg"
-    },
-    {
-      "id": 8,
-      "name": "Starbucks",
-      "description": "3 Abc Street 7 #01-J4, XYZ Mall",
-      "imgSrc": "https://media.cntraveler.com/photos/5af4afcff535091186d4acbc/5:4/w_480,c_limit/GettyImages-522435114.jpg",
-      "hours": "Open 24 hours",
-      "phone": "1234 5678",
-      "categories": [
-        "Coffee",
-        "Cafes",
-        "Desert",
-        "Western"
-      ]
-    },
-    {
-      "id": 9,
-      "name": "Starbucks",
-      "description": "3 Abc Street 7 #01-J4, XYZ Mall",
-      "imgSrc": "https://media.cntraveler.com/photos/5af4afcff535091186d4acbc/5:4/w_480,c_limit/GettyImages-522435114.jpg",
-      "hours": "Open 24 hours",
-      "phone": "1234 5678",
-      "categories": [
-        "Coffee",
-        "Cafes",
-        "Desert",
-        "Western"
-      ]
-    },
-    {
-      "id": 10,
-      "name": "Starbucks",
-      "description": "3 Abc Street 7 #01-J4, XYZ Mall",
-      "imgSrc": "https://media.cntraveler.com/photos/5af4afcff535091186d4acbc/5:4/w_480,c_limit/GettyImages-522435114.jpg",
-      "hours": "Open 24 hours",
-      "phone": "1234 5678",
-      "categories": [
-        "Coffee",
-        "Cafes",
-        "Desert",
-        "Western"
-      ]
-    }
-  ],
   "notices": [
     {
       "id": 1,
@@ -143,11 +9,327 @@
       "id": 2,
       "title": "新的评论",
       "message": "的确是这样。"
+    }
+  ],
+  "categories": [
+    {
+      "name": "home",
+      "icon": "home"
+    },
+    {
+      "name": "popular",
+      "icon": "rise"
+    },
+    {
+      "name": "all",
+      "icon": "project"
+    },
+    {
+      "name": "culture",
+      "icon": "read"
+    },
+    {
+      "name": "tech",
+      "icon": "laptop"
+    },
+    {
+      "name": "economy",
+      "icon": "dollar"
+    },
+    {
+      "name": "car",
+      "icon": "car"
+    },
+    {
+      "name": "health",
+      "icon": "medicine-box"
+    },
+    {
+      "name": "music",
+      "icon": "customer-service"
+    },
+    {
+      "name": "photograph",
+      "icon": "camera"
+    },
+    {
+      "name": "time control",
+      "icon": "hourglass"
+    },
+    {
+      "name": "ideas",
+      "icon": "bulb"
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": 1,
+      "name": "culture",
+      "icon": "read"
+    },
+    {
+      "id": 2,
+      "name": "tech",
+      "icon": "laptop"
+    },
+    {
+      "id": 8,
+      "name": "photograph",
+      "icon": "camera"
+    },
+    {
+      "id": 9,
+      "name": "time control",
+      "icon": "hourglass"
+    }
+  ],
+  "news": [
+    {
+      "id": 1,
+      "votes": 146,
+      "voted": 0,
+      "saved": false,
+      "hidden": false,
+      "category": "home",
+      "source": {
+        "id": null,
+        "name": "Forbes.com"
+      },
+      "author": "Jason Bloomberg, Contributor, Jason Bloomberg, Contributor https://www.forbes.com/sites/jasonbloomberg/",
+      "title": "JPM Coin From JPMorgan Chase Vs. Crypto Fans: Who's Missing The Point?",
+      "description": "Given that there’s little motivation to create a single-bank digital token and even less of a motivation to use a competitor’s, it’s not clear if the whole idea of JPM Coin is inherently flawed. Only time will tell.",
+      "url": "https://www.forbes.com/sites/jasonbloomberg/2019/02/22/jpm-coin-from-jpmorgan-chase-vs-crypto-fans-whos-missing-the-point/",
+      "urlToImage": "https://thumbor.forbes.com/thumbor/600x315/https%3A%2F%2Fblogs-images.forbes.com%2Fjasonbloomberg%2Ffiles%2F2019%2F02%2Fjpmorgan.jpg",
+      "publishedAt": "2019-02-22T14:13:00Z",
+      "content": "Last week, \r\n JPMorgan Chase\r\n announced the creation of a prototype digital coin the megabank dubbed JPM Coin. The cryptocurrency (crypto) world immediately reacted with consternation.Much of the controversy concerns semantics albeit semantics that represent… [+19419 chars]"
+    },
+    {
+      "id": 2,
+      "votes": 1469,
+      "voted": 1,
+      "saved": false,
+      "hidden": true,
+      "category": "home",
+      "source": {
+        "id": null,
+        "name": "Stackoverflow.com"
+      },
+      "author": "Stack Overflow",
+      "title": "Python check for confirmation(s) in a celery script",
+      "description": "i currently integrating bitcoin payments into my shop, it's a little conecpt im writing on and i want to use electrum to work with my shop. therefor i'm generating a unique BTC addresses for each user to deposit onto. To make the deposit workflow complete i n…",
+      "url": "https://stackoverflow.com/questions/54828739/python-check-for-confirmations-in-a-celery-script",
+      "urlToImage": "https://cdn.sstatic.net/Sites/stackoverflow/img/apple-touch-icon@2.png?v=73d79a89bded",
+      "publishedAt": "2019-02-22T14:08:50Z",
+      "content": "i currently integrating bitcoin payments into my shop, it's a little conecpt im writing on and i want to use electrum to work with my shop. therefor i'm generating a unique BTC addresses for each user to deposit onto.\r\nTo make the deposit workflow complete i … [+537 chars]"
     },
     {
       "id": 3,
-      "title": "新的评论",
-      "message": "的确是这样。"
+      "votes": 14688,
+      "voted": -1,
+      "saved": true,
+      "hidden": false,
+      "category": "home",
+      "source": {
+        "id": null,
+        "name": "Ieee.org"
+      },
+      "author": "Morgen Peck",
+      "title": "What's in a Blockchain? With New Tools, Anyone Can Find Out",
+      "description": "Services available through Google's BigQuery platform make it easy to search and analyze blockchain transactions",
+      "url": "https://spectrum.ieee.org/tech-talk/computing/networks/whats-in-a-blockchain-with-these-new-tools-anyone-can-find-out",
+      "urlToImage": "https://spectrum.ieee.org/image/MzIzNjA3OQ.jpeg",
+      "publishedAt": "2019-02-22T14:00:00Z",
+      "content": "Image: iStockphoto\r\nAs the intrigue of blockchains settles to a quiet simmer, it's time to ask: How far has the technology advanced? Hundreds of new coin species have been minted. Billions of dollars have been raised. And tales have been spun of an encroachin… [+7064 chars]"
+    },
+    {
+      "id": 4,
+      "votes": 146892,
+      "voted": 0,
+      "saved": false,
+      "hidden": false,
+      "category": "home",
+      "source": {
+        "id": null,
+        "name": "Forbes.com"
+      },
+      "author": "Jefferson Nunn, Contributor, Jefferson Nunn, Contributor https://www.forbes.com/sites/jeffersonnunn/",
+      "title": "Bitcoin And The Rise Of The Individual Coin Offering",
+      "description": "Publicly Traded Individuals can now choose blockchain as a method of governance and control over their lives. What does that mean for our future?",
+      "url": "https://www.forbes.com/sites/jeffersonnunn/2019/02/22/bitcoin-and-the-rise-of-the-individual-coin-offering/",
+      "urlToImage": "https://thumbor.forbes.com/thumbor/600x315/https%3A%2F%2Fspecials-images.forbesimg.com%2Fdam%2Fimageserve%2F1090813474%2F960x0.jpg%3Ffit%3Dscale",
+      "publishedAt": "2019-02-22T13:57:00Z",
+      "content": "Share to facebook\r\nShare to twitter\r\nShare to linkedin\r\nIndividual Coin OfferingsGetty\r\nTechnological advancements are constantly reshaping society. Personal computers, the internet, and blockchain are just a few instigators of major changes in the way busine… [+11166 chars]"
+    },
+    {
+      "id": 5,
+      "votes": 1468925,
+      "voted": 0,
+      "saved": true,
+      "hidden": false,
+      "category": "popular",
+      "source": {
+        "id": null,
+        "name": "Yahoo.com"
+      },
+      "author": null,
+      "title": "Dow, Bitcoin Flash Green as US Stock Market Guns to Extend Winning Streak",
+      "description": "Both the Dow and the bitcoin price flashed green on Friday, as the US stock market fought to extend its two-month winning streak and crypto traders mulled whether a 14-month downturn has finally come to a close. Dow Futures Mount Triple-Digit Recovery As of 8…",
+      "url": "https://finance.yahoo.com/news/dow-bitcoin-flash-green-us-135456383.html",
+      "urlToImage": "https://s.yimg.com/uu/api/res/1.2/P4TKdqLJaEW4n8ygp6jeJg--~B/aD02Njc7dz0xMDAwO3NtPTE7YXBwaWQ9eXRhY2h5b24-/http://media.zenfs.com/en-US/homerun/ccn_656/05add1ca9f333998b22065bfcb6c0c8b",
+      "publishedAt": "2019-02-22T13:54:56Z",
+      "content": "Both the Dow and the bitcoin price flashed green on Friday, as the US stock market fought to extend its two-month winning streak and crypto traders mulled whether a 14-month downturn has finally come to a close.\r\nAs of 8:45 am ET, Dow Jones Industrial Average… [+648 chars]"
+    },
+    {
+      "id": 6,
+      "votes": 14689257,
+      "voted": 0,
+      "saved": false,
+      "hidden": false,
+      "category": "popular",
+      "source": {
+        "id": "crypto-coins-news",
+        "name": "Crypto Coins News"
+      },
+      "author": "Josiah Wilmoth",
+      "title": "Dow, Bitcoin Flash Green as US Stock Market Guns to Extend Winning Streak",
+      "description": "Both the Dow and the bitcoin price flashed green on Friday, as the US stock market fought to extend its two-month winning streak and crypto traders mulled whether a 14-month downturn has finally come to a close. Dow Futures Mount Triple-Digit Recovery As of 8…",
+      "url": "https://www.ccn.com/dow-jones-us-stock-market-bitcoin-2-22-19",
+      "urlToImage": "https://www.ccn.com/wp-content/uploads/2019/01/wall-street-stock-market-bull-dow-jones-bitcoin-shutterstock.jpg",
+      "publishedAt": "2019-02-22T13:54:56Z",
+      "content": "Both the Dow and the bitcoin price flashed green on Friday, as the US stock market fought to extend its two-month winning streak and crypto traders mulled whether a 14-month downturn has finally come to a close.\r\nDow Futures Mount Triple-Digit Recovery\r\nAs of… [+6322 chars]"
+    },
+    {
+      "id": 7,
+      "votes": 146892579,
+      "voted": 0,
+      "saved": false,
+      "hidden": false,
+      "category": "popular",
+      "source": {
+        "id": null,
+        "name": "Plos.org"
+      },
+      "author": "Kostas Vavitsas",
+      "title": "CRISPR Human Babies: Too soon, not never",
+      "description": "Guest post by Thomas Clements Jiankui He made waves in November 2018 when he announced he had successfully genetically modified human twin girls using CRISPR. How did he do it? What are the ethical concerns? Are the others out there? Is this a science fiction…",
+      "url": "https://blogs.plos.org/synbio/2019/02/22/crispr-human-babies-too-soon-not-never/",
+      "urlToImage": "https://blogs.plos.org/synbio/files/2018/05/man-2125123_1280-1024x769.png",
+      "publishedAt": "2019-02-22T13:43:05Z",
+      "content": "Guest post by Thomas Clements\r\nJiankui He made waves in November 2018 when he announced he had successfully genetically modified human twin girls using CRISPR. How did he do it? What are the ethical concerns? Are the others out there? Is this a science fictio… [+18596 chars]"
+    },
+    {
+      "id": 8,
+      "votes": 146892579,
+      "voted": 0,
+      "saved": false,
+      "hidden": false,
+      "category": "popular",
+      "source": {
+        "id": null,
+        "name": "Hackernoon.com"
+      },
+      "author": "Cryptonite — Cryptocurrency & Blockchain Writer",
+      "title": "How To Secure Your Cryptocurrencies",
+      "description": "Decentralization places the responsibility of loss squarely on our own shoulders",
+      "url": "https://hackernoon.com/how-to-secure-your-cryptocurrencies-93b419e15fde",
+      "urlToImage": "https://cdn-images-1.medium.com/max/1200/1*p_vS_-wNGDUmjngv0GYcWQ.jpeg",
+      "publishedAt": "2019-02-22T13:31:00Z",
+      "content": "At least 26,500 Bitcoins, 430,000 Ether, 11,000 Bitcoin Cash and 200,000 Litecoin have disappeared forever.\r\nThis was due to the death of a cryptocurrency exchanges founder, who was the only person to know the private keys for the cold wallets used to store t… [+7135 chars]"
+    },
+    {
+      "id": 9,
+      "votes": 1468925791,
+      "voted": 0,
+      "saved": false,
+      "hidden": false,
+      "category": "culture",
+      "source": {
+        "id": null,
+        "name": "Hacked.com"
+      },
+      "author": "Ken Chigbo",
+      "title": "Binance Coin Price Analysis: BNB Bulls Maintain Elevation Following Testnet Launch for Binance DEX",
+      "description": "Binance Coin on Friday is holding healthy gains of around 3% in the early part of the session. The decentralized exchange Binance DEX testnet was launched earlier this week. Binance will be looking to gather user feedback before an official roll-out of the pl…",
+      "url": "https://hacked.com/binance-coin-price-analysis-bnb-bulls-maintain-elevation-following-testnet-launch-for-binance-dex/",
+      "urlToImage": "https://hacked.com/wp-content/uploads/2019/01/Binance-Coin-1-1000x600.jpg",
+      "publishedAt": "2019-02-22T13:29:00Z",
+      "content": "So far, each iteration in the evolution of cryptocurrencies and blockchain companies has come with its own issues and setbacks. This is because the scale of the companies is actually fairly limited, and not as comprehensive as the promises made by blockchain … [+3308 chars]"
+    },
+    {
+      "id": 10,
+      "votes": 1,
+      "voted": 1,
+      "saved": false,
+      "hidden": false,
+      "category": "tech",
+      "source": {
+        "id": "the-next-web",
+        "name": "The Next Web"
+      },
+      "author": "Matthew Beedham",
+      "title": "Why did the chicken cross the road? To get fed by blockchain",
+      "description": "It’s a cold, wet, and windy day in mid-January. You hear the knocking of the shutters against the window pane as you roll over in bed trying to find some warmth. Looking at the clock that’s been handed down four generations in your family you see it’s still n…",
+      "url": "https://thenextweb.com/hardfork/2019/02/22/feed-chickens-using-bitcoin-blockchain/",
+      "urlToImage": "https://img-cdn.tnwcdn.com/image/hardfork?filter_last=1&fit=1280%2C640&url=https%3A%2F%2Fcdn0.tnwcdn.com%2Fwp-content%2Fblogs.dir%2F1%2Ffiles%2F2019%2F02%2F2-chickens-pollofeed-blockchain-cluck-bitcoin-lightning-network-cryptocurrency-feed.jpg&signature=964255c967bc88d56ad0db8e5e1b5c3e",
+      "publishedAt": "2019-02-22T13:25:52Z",
+      "content": "Its a cold, wet, and windy day in mid-January. You hear the knocking of the shutters against the window pane as you roll over in bed trying to find some warmth. Looking at the clock thats been handed down four generations in your family you see its still not … [+1312 chars]"
+    },
+    {
+      "id": 11,
+      "votes": -1,
+      "voted": -1,
+      "saved": false,
+      "hidden": false,
+      "category": "photograph",
+      "source": {
+        "id": "the-next-web",
+        "name": "The Next Web"
+      },
+      "author": null,
+      "title": "Blackmailers made $332,000 in Bitcoin during ‘sextortion’ scam",
+      "description": "Blackmailers made $332,000 in Bitcoin during ‘sextortion’ scam",
+      "url": "http://cc.thenextweb.com/post/182979699120/httpsthenextwebcomhardfork20190222bitcoin-sex-s",
+      "urlToImage": "https://66.media.tumblr.com/d53370772f8ea0f9f2d5a44bdc524f7c/tumblr_pnbwrcqcMC1qejjfeo1_1280.png",
+      "publishedAt": "2019-02-22T13:14:00Z",
+      "content": "Blackmailers made $332,000 in Bitcoin during ‘sextortion’ scam"
+    },
+    {
+      "id": 12,
+      "votes": 0,
+      "voted": 0,
+      "saved": false,
+      "hidden": false,
+      "category": "time control",
+      "source": {
+        "id": "the-next-web",
+        "name": "The Next Web"
+      },
+      "author": "Yessi Bello Perez",
+      "title": "Blackmailers made $332,000 in Bitcoin during ‘sextortion’ scam",
+      "description": "Cybercriminals raked in more than $300,000 in Bitcoin payments during a ‘sextortion’ email-based blackmail campaign, which was first spotted in 2017 but saw increased activity mid-last year. According to a report by UK firm Digital Shadows, which tracked a sa…",
+      "url": "https://thenextweb.com/hardfork/2019/02/22/bitcoin-sex-scam-blackmailers/",
+      "urlToImage": "https://img-cdn.tnwcdn.com/image/hardfork?filter_last=1&fit=1280%2C640&url=https%3A%2F%2Fcdn0.tnwcdn.com%2Fwp-content%2Fblogs.dir%2F1%2Ffiles%2F2019%2F02%2Fcybercrime.png&signature=bc44f870809029c616b216d9b5215d06",
+      "publishedAt": "2019-02-22T13:12:33Z",
+      "content": "Cybercriminals raked in more than $300,000 in Bitcoin BTC payments during a sextortion email-based blackmail campaign, which was first spotted in 2017 but saw increased activity mid-last year.\r\nAccording to a report by UK firm Digital Shadows, which tracked a… [+3281 chars]"
+    },
+    {
+      "id": 13,
+      "votes": 0,
+      "voted": 0,
+      "saved": false,
+      "hidden": false,
+      "category": "time control",
+      "source": {
+        "id": null,
+        "name": "Vox.com"
+      },
+      "author": "Sean Illing",
+      "title": "It is absolutely time to panic about climate change",
+      "description": "Author David Wallace-Wells on the dystopian hellscape that awaits us.",
+      "url": "https://www.vox.com/energy-and-environment/2019/2/22/18188562/climate-change-david-wallace-wells-the-uninhabitable-earth",
+      "urlToImage": "https://cdn.vox-cdn.com/thumbor/8IcmupHF5FsAD7TG145-vh8--uc=/0x532:4256x2760/fit-in/1200x630/cdn.vox-cdn.com/uploads/chorus_asset/file/13897749/GettyImages_1071835598.jpg",
+      "publishedAt": "2019-02-22T13:10:00Z",
+      "content": "Author David Wallace-Wells on the dystopian hellscape that awaits us. “It is, I promise, worse than you think.” That was was the first line of David Wallace-Wells’s horrifying 2017 essay in New York magazine about climate change. It was an attempt to paint a … [+18876 chars]"
     }
   ]
 }

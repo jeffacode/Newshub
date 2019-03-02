@@ -1,9 +1,9 @@
 {
-  "name": "react-news-pro",
+  "name": "newshub",
   "version": "0.0.1",
   "description": "A React App for News Recommendation",
   "main": "index.js",
-  "repository": "https://github.com/jeffacode/react-news-pro.git",
+  "repository": "https://github.com/jeffacode/Newshub.git",
   "author": "Jeff Liu <dora190421@gmail.com>",
   "license": "MIT",
   "scripts": {

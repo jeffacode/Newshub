@@ -1,2 +1,2 @@
-# react-news-pro
+# Newshub
 A React App for News Recommendation

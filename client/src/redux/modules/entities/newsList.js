@@ -1,21 +1,21 @@
 import actionTypes from '../newsPanel/actionTypes';
 
 export const schema = {
-  name: 'news',
+  name: 'newsList',
   id: 'id',
 };
 
 const initialState = {};
 
 const reducer = (state = initialState, action) => {
-  if (action.response && action.response[schema.name]) {
+  if (action.data && action.data[schema.name]) {
     return {
       ...state,
-      ...action.response[schema.name],
+      ...action.data[schema.name],
     };
   }
 
-  if (action.type === actionTypes.changeNews) {
+  if (action.type === actionTypes.changeNewsById) {
     const { id, data } = action.payload;
     return {
       ...state,
@@ -26,13 +26,14 @@ const reducer = (state = initialState, action) => {
     };
   }
 
-  if (action.type === actionTypes.clearNews) {
+  if (action.type === actionTypes.clearNewsList) {
     return initialState;
   }
+
   return state;
 };
 
 export default reducer;
 
 // selector
-export const getNewsById = (state, id) => state.entities.news[id];
+export const getNewsById = (state, id) => state.entities.newsList[id];

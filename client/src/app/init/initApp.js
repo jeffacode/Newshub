@@ -1,27 +1,24 @@
-import Cookie from 'js-cookie';
+import Auth from 'utils/Auth';
+import Locale from 'utils/Locale';
 import appActionTypes from 'redux/modules/app/actionTypes';
 import {
-  saveUser, fetchNotices, fetchSubscriptions,
+  setUser, fetchNotices, fetchSubscriptions,
 } from 'redux/modules/app/action';
 import appConfig from '../config/appConfig';
 
 const { defaultLocale } = appConfig;
 
 const initApp = (dispatch) => {
-  // 初始化应用时查看cookie中是否有locale字段
-  const locale = Cookie.get('locale');
-  if (!locale) {
-    // 没有的话，将默认locale存进cookie
-    Cookie.set('locale', defaultLocale);
+  if (!Locale.localeExisted()) {
+    // 本地存储配置默认的locale，这步操作必须在鉴权之前完成
+    Locale.storeLocale(defaultLocale);
   }
 
-  // 初始化应用时查看cookie中是否有user字段，有的话就表示已登录
-  const user = Cookie.get('user');
-  if (user) {
-    // 恢复isLogin为true
-    dispatch({ type: appActionTypes.login.successType });
+  if (Auth.isUserAuthenticated()) {
     // 恢复用户信息
-    dispatch(saveUser(JSON.parse(user)));
+    dispatch(setUser(Auth.getUser()));
+    // 恢复isLogin为true
+    dispatch({ type: appActionTypes.userLoginSuccess });
     // 重新获取通知数据
     dispatch(fetchNotices());
     // 重新获取订阅数据

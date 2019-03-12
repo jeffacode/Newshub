@@ -7,116 +7,48 @@ import filter from 'lodash/filter';
 import includes from 'lodash/includes';
 import isEmpty from 'lodash/isEmpty';
 import iconStyles from 'constant/iconStyles';
-import { views } from 'redux/modules/app/reducer';
-import {
-  Input, Icon, Popover, Tooltip, Menu, Dropdown,
-} from 'antd';
+import SearchHistory from 'utils/SearchHistory';
+import parseSearchQuery from 'utils/parseSearchQuery';
+import feeds from 'constant/feeds';
+import { Input, Icon, Popover } from 'antd';
 import './style.scss';
-
-const feeds = [
-  {
-    id: 1,
-    name: 'home',
-    icon: 'home',
-  },
-  {
-    id: 2,
-    name: 'popular',
-    icon: 'rise',
-  },
-  {
-    id: 3,
-    name: 'all',
-    icon: 'project',
-  },
-];
-
-const getFeeds = (isLogin) => {
-  if (isLogin) {
-    return feeds;
-  }
-  return feeds.slice(1, 3);
-};
-
-const popularityOptions = [
-  {
-    key: 1,
-    name: 'appHeader_sortSelector_popularityBest',
-    icon: 'rocket',
-  },
-  {
-    key: 2,
-    name: 'appHeader_sortSelector_popularityHot',
-    icon: 'fire',
-  },
-  {
-    key: 3,
-    name: 'appHeader_sortSelector_popularityNew',
-    icon: 'coffee',
-  },
-  {
-    key: 4,
-    name: 'appHeader_sortSelector_popularityControversial',
-    icon: 'thunderbolt',
-  },
-  {
-    key: 5,
-    name: 'appHeader_sortSelector_popularityTop',
-    icon: 'trophy',
-  },
-  {
-    key: 6,
-    name: 'appHeader_sortSelector_popularityRising',
-    icon: 'rise',
-  },
-];
-
-const timeOptions = [
-  {
-    key: 1,
-    name: 'appHeader_sortSelector_timePastHour',
-  },
-  {
-    key: 2,
-    name: 'appHeader_sortSelector_timePast24Hours',
-  },
-  {
-    key: 3,
-    name: 'appHeader_sortSelector_timePastWeek',
-  },
-  {
-    key: 4,
-    name: 'appHeader_sortSelector_timePastMonth',
-  },
-  {
-    key: 5,
-    name: 'appHeader_sortSelector_timePastYear',
-  },
-  {
-    key: 6,
-    name: 'appHeader_sortSelector_timeOfAllTime',
-  },
-];
 
 class AppHeader extends Component {
   constructor(props) {
     super(props);
     this.navigator = React.createRef();
+    this.search = React.createRef();
+    const defaultSearchKeyword = parseSearchQuery(props.searchQuery).q;
+    if (defaultSearchKeyword) { // 如果存在
+      if (SearchHistory.searchHistoryExisted()) {
+        const searchHistory = SearchHistory.getSearchHistory();
+        if (defaultSearchKeyword !== searchHistory[0]) {
+          SearchHistory.storeSearchHistory([
+            defaultSearchKeyword,
+            ...searchHistory,
+          ]);
+        }
+      } else {
+        SearchHistory.storeSearchHistory([this.defaultSearchKeyword]);
+      }
+    }
     this.state = {
       showNavigatorDropdown: false,
       navigatorFilterKeyword: '',
-      searchKeyword: '',
-      selectedPopularityOption: popularityOptions[0],
-      selectedTimeOption: timeOptions[0],
+      searchKeyword: defaultSearchKeyword || '',
+      searchHistory: SearchHistory.searchHistoryExisted() ? SearchHistory.getSearchHistory() : [],
+      showSearchHistory: false,
     };
   }
 
   componentDidMount() {
     document.addEventListener('click', this.hideNavigatorDropdown);
+    document.addEventListener('click', this.hideSearchHistory);
   }
 
   componentWillUnmount() {
     document.removeEventListener('click', this.hideNavigatorDropdown);
+    document.removeEventListener('click', this.hideSearchHistory);
   }
 
   switchNavigatorDropdown = () => {
@@ -148,14 +80,14 @@ class AppHeader extends Component {
 
   filterItems = (items, keyword) => filter(
     items,
-    ({ name }) => includes(
-      name,
+    ({ id }) => includes(
+      id,
       keyword.toLowerCase(),
     ),
   )
 
   renderNDI = (item) => {
-    const { id, name, icon } = item;
+    const { id, icon } = item;
     return (
       <div
         key={id}
@@ -163,12 +95,12 @@ class AppHeader extends Component {
         onClick={this.switchNavigatorDropdown}
         role="presentation"
       >
-        <Link to={`/c/${name}`}>
+        <Link to={`/${id}`}>
           <div className="appHeader__navigatorDropdownItem__leftIcon">
             <Icon type={icon} style={iconStyles.blue} />
           </div>
           <div className="appHeader__navigatorDropdownItem__content">
-            {name}
+            {id}
           </div>
         </Link>
       </div>
@@ -177,7 +109,7 @@ class AppHeader extends Component {
 
   renderNDIwithSubscriptionIcon = (item) => {
     const {
-      id, name, icon,
+      id, icon,
     } = item;
     return (
       <div
@@ -186,12 +118,12 @@ class AppHeader extends Component {
         onClick={this.switchNavigatorDropdown}
         role="presentation"
       >
-        <Link to={`/c/${name}`}>
+        <Link to={`/c/${id}`}>
           <div className="appHeader__navigatorDropdownItem__leftIcon">
             <Icon type={icon} style={iconStyles.blue} />
           </div>
           <div className="appHeader__navigatorDropdownItem__content">
-            {name}
+            {id}
           </div>
         </Link>
         <div
@@ -206,9 +138,7 @@ class AppHeader extends Component {
   }
 
   renderNavigatorDropdown = () => {
-    const {
-      isLogin, subscriptions, intl,
-    } = this.props;
+    const { subscriptions, intl } = this.props;
     const { navigatorFilterKeyword } = this.state;
 
     return (
@@ -226,21 +156,19 @@ class AppHeader extends Component {
             {intl.formatMessage({ id: 'appHeader_navigator_feeds' })}
           </div>
           {map(
-            this.filterItems(getFeeds(isLogin), navigatorFilterKeyword),
+            this.filterItems(feeds, navigatorFilterKeyword),
             item => this.renderNDI(item),
           )}
         </div>
-        {isLogin && (
-          <div className="appHeader__navigatorDropdown__group">
-            <div className="appHeader__navigatorDropdown__groupTitle">
-              {intl.formatMessage({ id: 'appHeader_navigator_subscriptions' })}
-            </div>
-            {map(
-              this.filterItems(subscriptions, navigatorFilterKeyword),
-              item => this.renderNDIwithSubscriptionIcon(item),
-            )}
+        <div className="appHeader__navigatorDropdown__group">
+          <div className="appHeader__navigatorDropdown__groupTitle">
+            {intl.formatMessage({ id: 'appHeader_navigator_subscriptions' })}
           </div>
-        )}
+          {map(
+            this.filterItems(subscriptions, navigatorFilterKeyword),
+            item => this.renderNDIwithSubscriptionIcon(item),
+          )}
+        </div>
       </div>
     );
   }
@@ -284,31 +212,124 @@ class AppHeader extends Component {
     );
   }
 
+  hideSearchHistory = (e) => {
+    // 当前点击区域不在search中
+    if (!this.search.current.contains(e.target)) {
+      this.setState({
+        showSearchHistory: false,
+      });
+    }
+  }
+
+  onSearchFocus = () => {
+    this.setState({
+      showSearchHistory: true,
+    });
+  }
+
   onSearchChange = (e) => {
     this.setState({
       searchKeyword: e.target.value,
     });
   }
 
+  go2SearchPanel = (searchKeyword) => {
+    const { history } = this.props;
+    history.push(`/search?q=${encodeURIComponent(searchKeyword)}`);
+  }
+
   onSearchEnter = (e) => {
-    console.log(e.target.value);
+    e.persist();
+    const currentSearchKeyword = e.target.value;
+    if (currentSearchKeyword) {
+      this.setState((prevState) => {
+        const newSearchHistory = [
+          currentSearchKeyword,
+          ...prevState.searchHistory,
+        ];
+
+        // 本地存储新的搜索历史
+        SearchHistory.storeSearchHistory(newSearchHistory);
+
+        // 更改搜索栏状态
+        return {
+          searchHistory: newSearchHistory,
+          showSearchHistory: false,
+        };
+      }, () => this.go2SearchPanel(currentSearchKeyword)); // 跳转到搜索页
+    }
+  }
+
+  onSearchHistoryClick = (historySearchKeyword) => {
+    this.setState({
+      searchKeyword: historySearchKeyword,
+      showSearchHistory: false,
+    }, () => this.go2SearchPanel(historySearchKeyword)); // 跳转到搜索页
+  }
+
+  clearSearchHistory = (e, index) => {
+    e.stopPropagation();
+    this.setState((prevState) => {
+      const newSearchHistory = filter(
+        prevState.searchHistory,
+        (item, i) => i !== index,
+      );
+
+      // 本地存储新的历史记录
+      SearchHistory.storeSearchHistory(newSearchHistory);
+
+      const result = {
+        searchHistory: newSearchHistory,
+      };
+      if (prevState.searchHistory.length === 1) {
+        return { ...result, showSearchHistory: false };
+      }
+      return result;
+    });
+  }
+
+  renderSearchHistory = () => {
+    const { searchHistory } = this.state;
+    return (
+      <div className="appHeader__searchHistory">
+        {map(searchHistory, (historySearchKeyword, index) => (
+          <div
+            key={index}
+            className="appHeader__searchHistory__item"
+            onClick={() => this.onSearchHistoryClick(historySearchKeyword)}
+            role="presentation"
+          >
+            <div className="appHeader__searchHistory__keyword">{historySearchKeyword}</div>
+            <div
+              className="appHeader__searchHistory__clear"
+              onClick={e => this.clearSearchHistory(e, index)}
+              role="presentation"
+            >
+              <Icon type="close-circle" theme="filled" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   }
 
   renderSearch = () => {
     const { intl } = this.props;
-    const { searchKeyword } = this.state;
+    const { searchKeyword, showSearchHistory } = this.state;
     return (
-      <div className="appHeader__search__container">
+      <div className="appHeader__search__container" ref={this.search}>
         <Input
           type="text"
           className="appHeader__search"
           prefix={<Icon type="search" />}
           placeholder={intl.formatMessage({ id: 'appHeader_search_news' })}
           value={searchKeyword}
+          onFocus={this.onSearchFocus}
           onChange={this.onSearchChange}
           onPressEnter={this.onSearchEnter}
           allowClear
         />
+        {showSearchHistory && this.renderSearchHistory()}
       </div>
     );
   }
@@ -347,137 +368,26 @@ class AppHeader extends Component {
     </div>
   );
 
-  renderHeaderGroup = (title, ...items) => {
-    const { intl } = this.props;
-
-    return (
-      <div className="appHeader__headerGroup">
-        <div className="appHeader__headerGroup__title ft-bold">
-          {intl.formatMessage({ id: `appHeader_headerGroup_${title}` })}
-        </div>
-        {map(items, (item, index) => (
-          <div className="appHeader__headerGroup__item" key={index}>{item}</div>
-        ))}
-      </div>
-    );
-  }
-
-  renderViewSwitch = () => {
-    const { selectedView, selectView, intl } = this.props;
-    const viewSwitch = (
-      map(views, (view) => {
-        const { id, name, icon } = view;
-        return (
-          <div
-            key={id}
-            className="appHeader__viewSwitch"
-            onClick={() => selectView(view)}
-            role="presentation"
-          >
-            <Tooltip
-              placement="top"
-              title={intl.formatMessage({ id: name })}
-              trigger="hover"
-            >
-              <Icon
-                type={icon}
-                style={selectedView.id === id ? iconStyles.blue : iconStyles.grey}
-              />
-            </Tooltip>
-          </div>
-        );
-      })
-    );
-    return this.renderHeaderGroup('view', viewSwitch);
-  }
-
-  selectPopularityOption = (option) => {
-    this.setState({
-      selectedPopularityOption: option,
-    });
-  }
-
-  selectTimeOption = (option) => {
-    this.setState({
-      selectedTimeOption: option,
-    });
-  }
-
-  renderSortSelector = (options, selectedOption, handler) => {
-    const { intl } = this.props;
-    const menu = (
-      <Menu>
-        {map(options, (option) => {
-          const { key, name, icon } = option;
-          return (
-            <Menu.Item key={key}>
-              <div
-                className="appHeader__sortSelector__option"
-                onClick={() => handler(option)}
-                role="presentation"
-              >
-                {icon && (<div><span className="mr-5"><Icon type={icon} style={iconStyles.blue} /></span></div>)}
-                <div>{intl.formatMessage({ id: name })}</div>
-              </div>
-            </Menu.Item>
-          );
-        })}
-      </Menu>
-    );
-
-    return (
-      <Dropdown overlay={menu} trigger={['click']}>
-        <div className="appHeader__sortSelector__option--selected ft-bold">
-          {selectedOption.icon && (<div><span className="mr-5"><Icon type={selectedOption.icon} /></span></div>)}
-          <div>{intl.formatMessage({ id: selectedOption.name })}</div>
-          <div><Icon type="caret-down" /></div>
-        </div>
-      </Dropdown>
-    );
-  }
-
-  renderSort = () => {
-    const { selectedPopularityOption, selectedTimeOption } = this.state;
-    return this.renderHeaderGroup(
-      'sort',
-      this.renderSortSelector(
-        popularityOptions,
-        selectedPopularityOption,
-        this.selectPopularityOption,
-      ),
-      this.renderSortSelector(
-        timeOptions,
-        selectedTimeOption,
-        this.selectTimeOption,
-      ),
-    );
-  }
-
   render() {
-    const { isLogin } = this.props;
-
     return (
       <div className="appHeader">
         {this.renderNavigator()}
-        {this.renderSort()}
-        {this.renderViewSwitch()}
         {this.renderSearch()}
-        {isLogin && this.renderNotice()}
+        {this.renderNotice()}
       </div>
     );
   }
 }
 
 AppHeader.propTypes = {
-  isLogin: PropTypes.bool.isRequired,
   notices: PropTypes.array.isRequired,
   subscriptions: PropTypes.array.isRequired,
-  selectedView: PropTypes.object.isRequired,
   navigatorBarContent: PropTypes.object.isRequired,
+  searchQuery: PropTypes.string.isRequired,
   deleteNotice: PropTypes.func.isRequired,
   unsubscribe: PropTypes.func.isRequired,
-  selectView: PropTypes.func.isRequired,
   intl: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
 export default AppHeader;

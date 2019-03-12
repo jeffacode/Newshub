@@ -5,7 +5,6 @@
   padding: 0 10px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   background: $grey-1;
   box-shadow: $shadow-1-down-light;
 
@@ -15,6 +14,7 @@
     align-self: baseline;
     background: #fff;
     border-radius: $border-radius-base;
+    z-index: $z-index-1;
 
     &:hover {
       cursor: pointer;
@@ -44,6 +44,7 @@
   }
 
   &__navigatorDropdown {
+    padding-bottom: 5px;
     width: 220px;
     max-height: 300px;
     overflow: auto;
@@ -100,6 +101,55 @@
 
     &__container {
       flex: 1;
+      padding: 0 10px;
+      align-self: baseline;
+      z-index: $z-index-1;
+    }
+  }
+
+  // 搜索历史
+  &__searchHistory {
+    width: 100%;
+    margin: 5px 0;
+    padding: 5px 0;
+    background: #fff;
+    border-radius: $border-radius-base;
+    box-shadow: $shadow-1-down;
+
+    &__item {
+      height: 35px;
+      line-height: 35px;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      
+      &~& {
+        &::before {
+          content: '';
+          display: block;
+          width: 100%;
+          height: 1px;
+          background: $grey-4;
+        }
+      }
+
+      &:hover {
+        cursor: pointer;
+        background: $grey-3;
+      }
+    }
+
+    &__keyword, &__clear {
+      display: inline-block;
+    }
+
+    &__keyword {
+      width: calc(100% - 30px);
+      font-weight: 500;
+    }
+
+    &__clear {
+      width: 30px;
+      text-align: center;
     }
   }
 

@@ -1,0 +1,67 @@
+@import "styles/helpers";
+
+.searchCategory {
+  padding: 0 10px 10px 10px;
+  background: #fff;
+  border-radius: $border-radius-base;
+  box-shadow: $shadow-1-down-light;
+  
+  &__title {
+    margin-bottom: 10px;
+    height: 40px;
+    line-height: 40px;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: $grey-8;
+    border-bottom: 1px solid $grey-5;
+  }
+
+  &__content {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  &__category {
+    box-sizing: border-box;
+    padding: 10px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    border-radius: $border-radius-base;
+
+    &:hover {
+      box-shadow: $shadow-1-down;
+    }
+
+    &__icon {
+      font-size: 24px;
+      color: $blue-6;
+    }
+
+    &__title {
+      margin-left: 5px;
+    }
+
+    &__name {
+      font-weight: 500;
+      color: $grey-8;
+    }
+
+    &__subscribers {
+      white-space: nowrap;
+      font-size: $font-size-sm;
+      color: $grey-7;
+    }
+
+    &__subscribeBtn {
+      margin-left: 5px;
+
+      button {
+        width: 120px;
+        height: 35px;
+        font-weight: 500;
+        text-transform: uppercase;
+      }
+    }
+  }
+}

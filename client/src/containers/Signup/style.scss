@@ -1,13 +1,13 @@
 @import "styles/helpers";
 
-.login {
+.signup {
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: 112px 0 24px 0;
 
-  &__loginPanel {
+  &__signupPanel {
     display: flex;
     flex-direction: column;
   }
@@ -36,12 +36,23 @@
     text-align: center;
   }
 
-  &__loginInput {
+  &__signupInput {
     height: 40px;
     margin-bottom: 24px;
+    position: relative;
+
+    &--error {
+      margin-left: 10px;
+      position: absolute;
+      z-index: $z-index-1;
+      top: 10px;
+      left: 100%;
+      white-space: nowrap;
+      color: $red-6;
+    }
   }
 
-  &__loginBtn {
+  &__signupBtn {
     height: 40px;
   }
 

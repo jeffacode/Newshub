@@ -3,18 +3,16 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { injectIntl } from 'components/IntlContext';
 import { connect } from 'react-redux';
-import Cookie from 'js-cookie';
-import {
-  Input, Icon, Button,
-} from 'antd';
-import { login, clearLoginErrorMsg } from 'redux/modules/app/action';
-import { getIsLogin, getLoginErrorMsg } from 'redux/modules/app/reducer';
+import Locale from 'utils/Locale';
+import { login } from 'redux/modules/app/action';
+import { getError } from 'redux/modules/app/reducer';
+import { Input, Icon, Button } from 'antd';
 import logo from 'assets/logo.png';
 import './style.scss';
 
 class Login extends Component {
   state = {
-    username: '',
+    email: '',
     password: '',
   };
 
@@ -22,52 +20,65 @@ class Login extends Component {
     this.setState({ [key]: e.target.value });
   }
 
-  handleLogin = () => {
+  login = () => {
     const { login } = this.props;
-    const { username, password } = this.state;
-    login(username, password);
+    const { email, password } = this.state;
+    login(email, password);
   }
 
   updateLocale = (locale) => {
     const { intl } = this.props;
     intl.updateLocale(locale);
-    Cookie.set('locale', locale); // 同时更新cookie中的locale字段
+    Locale.storeLocale(locale);
   }
 
   renderLoginPanel = () => {
-    const { intl } = this.props;
-    const { username, password } = this.state;
+    const { error: { errors }, intl } = this.props;
+    const { email, password } = this.state;
     return (
       <div className="login__loginPanel">
         <div className="login__appInfo">
           <img className="login__appLogo" src={logo} alt="logo" />
         </div>
         <div className="login__appDesc">
-          {intl.formatMessage({ id: 'login_appDesc' })}
+          {intl.formatMessage({ id: 'appDesc' })}
         </div>
-        <Input
-          className="login__loginInput"
-          style={{ height: 40, marginBottom: 24 }}
-          placeholder={intl.formatMessage({ id: 'login_usernameInput_placeholder' })}
-          type="text"
-          prefix={<Icon type="user" style={{ color: 'rgba(0, 0, 0, .25)' }} />}
-          value={username}
-          onChange={e => this.onInputChange(e, 'username')}
-          onPressEnter={this.handleLogin}
-        />
-        <Input
-          className="login__loginInput"
-          placeholder={intl.formatMessage({ id: 'login_passwordInput_placeholder' })}
-          type="password"
-          prefix={<Icon type="lock" style={{ color: 'rgba(0, 0, 0, .25)' }} />}
-          value={password}
-          onChange={e => this.onInputChange(e, 'password')}
-          onPressEnter={this.handleLogin}
-        />
+        <div className="login__loginInput">
+          <Input
+            style={{ height: 40, marginBottom: 24 }}
+            placeholder={intl.formatMessage({ id: 'emailInput_placeholder' })}
+            type="email"
+            prefix={<Icon type="mail" style={{ color: 'rgba(0, 0, 0, .25)' }} />}
+            value={email}
+            onChange={e => this.onInputChange(e, 'email')}
+            onPressEnter={this.login}
+          />
+          {(errors && errors.email) && (
+            <div className="login__loginInput--error">
+              {errors.email}
+            </div>
+          )}
+        </div>
+        <div className="login__loginInput">
+          <Input
+            style={{ height: 40, marginBottom: 24 }}
+            placeholder={intl.formatMessage({ id: 'passwordInput_placeholder' })}
+            type="password"
+            prefix={<Icon type="lock" style={{ color: 'rgba(0, 0, 0, .25)' }} />}
+            value={password}
+            onChange={e => this.onInputChange(e, 'password')}
+            onPressEnter={this.login}
+          />
+          {(errors && errors.password) && (
+            <div className="login__loginInput--error">
+              {errors.password}
+            </div>
+          )}
+        </div>
         <Button
           className="login__loginBtn"
           type="primary"
-          onClick={this.handleLogin}
+          onClick={this.login}
         >
           {intl.formatMessage({ id: 'login' })}
         </Button>
@@ -106,49 +117,28 @@ class Login extends Component {
     );
   }
 
-  renderLoginErrorMsg = () => {
-    const { loginErrorMsg, clearLoginErrorMsg, intl } = this.props;
-    if (loginErrorMsg) {
-      const timer = setTimeout(() => {
-        clearLoginErrorMsg();
-        clearTimeout(timer);
-      }, 1000);
-
-      return (
-        <div className="login__errorMsg">
-          {intl.formatMessage({ id: loginErrorMsg })}
-        </div>
-      );
-    }
-    return null;
-  }
-
   render() {
     return (
       <div className="login">
         {this.renderLoginPanel()}
         {this.renderIntlSwitch()}
-        {this.renderLoginErrorMsg()}
       </div>
     );
   }
 }
 
 Login.propTypes = {
-  loginErrorMsg: PropTypes.string.isRequired,
+  error: PropTypes.object.isRequired,
   login: PropTypes.func.isRequired,
-  clearLoginErrorMsg: PropTypes.func.isRequired,
   intl: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
-  isLogin: getIsLogin(state),
-  loginErrorMsg: getLoginErrorMsg(state),
+  error: getError(state),
 });
 
 const mapDispatchToProps = {
   login,
-  clearLoginErrorMsg,
 };
 
 export default injectIntl(connect(

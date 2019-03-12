@@ -3,6 +3,13 @@ import PropTypes from 'prop-types';
 import { Icon } from 'antd';
 import './style.scss';
 
+const asyncTypeToMsg = {
+  FETCH: 'fetch_failed', // 获取数据失败
+  POST: 'post_failed', // 发送数据失败
+  PATCH: 'patch_failed', // 更改数据失败
+  DELETE: 'delete_failed', // 删除数据失败
+};
+
 class ErrorToast extends Component {
   componentDidMount() {
     const { onDismiss, timeout } = this.props;
@@ -14,7 +21,10 @@ class ErrorToast extends Component {
   }
 
   render() {
-    const { errorMsg } = this.props;
+    const { error: { message }, intl } = this.props;
+    const errorMsg = asyncTypeToMsg[message]
+      ? intl.formatMessage({ id: asyncTypeToMsg[message] })
+      : message;
 
     return (
       <div className="errorToast">
@@ -28,9 +38,10 @@ class ErrorToast extends Component {
 }
 
 ErrorToast.propTypes = {
-  errorMsg: PropTypes.string.isRequired,
+  error: PropTypes.object.isRequired,
   timeout: PropTypes.number.isRequired,
   onDismiss: PropTypes.func.isRequired,
+  intl: PropTypes.object.isRequired,
 };
 
 export default ErrorToast;

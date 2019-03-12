@@ -1,23 +1,26 @@
 export const getUserProfileMenu = username => [
   {
-    name: 'userProfile_saved',
-    icon: 'check-square',
-    path: `u/${username}/saved`,
-  },
-  {
-    name: 'userProfile_hidden',
-    icon: 'eye-invisible',
-    path: `u/${username}/hidden`,
-  },
-  {
-    name: 'userProfile_upvoted',
-    icon: 'caret-up',
-    path: `u/${username}/upvoted`,
-  },
-  {
-    name: 'userProfile_downvoted',
-    icon: 'caret-down',
-    path: `u/${username}/downvoted`,
+    name: 'userProfile_collections',
+    icon: 'folder',
+    path: `u/${username}`,
+    children: [
+      {
+        name: 'userProfile_saved',
+        path: 'saved',
+      },
+      {
+        name: 'userProfile_hidden',
+        path: 'hidden',
+      },
+      {
+        name: 'userProfile_upvoted',
+        path: 'upvoted',
+      },
+      {
+        name: 'userProfile_downvoted',
+        path: 'downvoted',
+      },
+    ],
   },
 ];
 
@@ -121,23 +124,23 @@ export const getUserSettingsMenu = () => [
       },
     ],
   },
-  {
-    name: 'userSettings_more_stuff',
-    icon: 'project',
-    path: 'settings/more-stuff',
-    children: [
-      {
-        name: 'userSettings_read_coins',
-        path: 'read_coins',
-      },
-      {
-        name: 'userSettings_get_premium',
-        path: 'get-premium',
-      },
-      {
-        name: 'userSettings_help_center',
-        path: 'help_center',
-      },
-    ],
-  },
+  // {
+  //   name: 'userSettings_more_stuff',
+  //   icon: 'project',
+  //   path: 'settings/more-stuff',
+  //   children: [
+  //     {
+  //       name: 'userSettings_read_coins',
+  //       path: 'read_coins',
+  //     },
+  //     {
+  //       name: 'userSettings_get_premium',
+  //       path: 'get-premium',
+  //     },
+  //     {
+  //       name: 'userSettings_help_center',
+  //       path: 'help_center',
+  //     },
+  //   ],
+  // },
 ];

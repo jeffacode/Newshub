@@ -5,9 +5,9 @@ import memoize from 'memoize-one';
 import { Link } from 'react-router-dom';
 import map from 'lodash/map';
 import {
-  Menu, Icon, Avatar,
-} from 'antd';
-import { getUserProfileMenu, getUserSettingsMenu } from 'app/config/menu';
+  getUserProfileMenu,
+  getUserSettingsMenu,
+} from 'app/config/menu';
 import {
   getFullPathMenu,
   getMenuKeys,
@@ -15,12 +15,11 @@ import {
   getSelectedKeys,
 } from 'utils/menuUtils';
 import getFirstChar from 'utils/getFirstChar';
-import getTime from 'utils/getTime';
 import logo from 'assets/logo.png';
+import { Menu, Icon, Avatar } from 'antd';
 import './style.scss';
 
 const { SubMenu } = Menu;
-const { year } = getTime();
 const memoizeFullPathMenu = memoize(menu => getFullPathMenu(menu));
 const memoizeSelectedKeys = memoize((url, fullPathMenu) => getSelectedKeys(
   urlToPaths(url),
@@ -30,7 +29,7 @@ const memoizeSelectedKeys = memoize((url, fullPathMenu) => getSelectedKeys(
 class AppSider extends Component {
   constructor(props) {
     super(props);
-    const { user: { name: username }, url } = props;
+    const { user: { username }, url } = props;
     const userProfileMenu = this.formatMenuData(getUserProfileMenu(username));
     const userSettingsMenu = this.formatMenuData(getUserSettingsMenu());
     this.state = {
@@ -97,7 +96,7 @@ class AppSider extends Component {
       user,
       intl,
     } = this.props;
-    const { name } = user;
+    const { username } = user;
     const classNames = classnames({
       appSider__header: true,
       notLogin: !isLogin,
@@ -108,10 +107,10 @@ class AppSider extends Component {
         <div className="appSider__header__btns">
           <div className="appSider__header__btn">
             <Avatar className="appSider__header__avatar">
-              {getFirstChar(name)}
+              {getFirstChar(username)}
             </Avatar>
             <div className="appSider__header__name ml-5">
-              <Link to="/">{name}</Link>
+              <Link to="/">{username}</Link>
             </div>
           </div>
           <div
@@ -156,9 +155,9 @@ class AppSider extends Component {
   };
 
   renderUserProfile = () => {
-    const { user, url, intl } = this.props;
+    const { user: { username }, url, intl } = this.props;
     const { userProfileOpenKeys } = this.state;
-    const userProfileMenu = this.formatMenuData(getUserProfileMenu(user.name));
+    const userProfileMenu = this.formatMenuData(getUserProfileMenu(username));
 
     return (
       <div className="appSider__userProfile">
@@ -201,32 +200,6 @@ class AppSider extends Component {
     );
   }
 
-  renderSiderFooter = () => (
-    <div className="appSider__footer">
-      <div className="appSider__footer__row">
-        <div>
-          <a href="/">About</a>
-          <a href="/">Careers</a>
-          <a href="/">Press</a>
-        </div>
-        <div>
-          <a href="/">Advertise</a>
-          <a href="/">Blog</a>
-          <a href="/">Help</a>
-        </div>
-        <div>
-          <a href="/">Content Policy</a>
-          <a href="/">Privacy Policy</a>
-          <a href="/">User Agreement</a>
-          <a href="/">Mod Policy</a>
-        </div>
-      </div>
-      <div className="appSider__footer__row">
-        {`© ${year} Newshub, Inc.`}
-      </div>
-    </div>
-  )
-
   render() {
     const { isLogin } = this.props;
 
@@ -239,7 +212,6 @@ class AppSider extends Component {
             {this.renderUserSettings()}
           </div>
         )}
-        {this.renderSiderFooter()}
       </div>
     );
   }

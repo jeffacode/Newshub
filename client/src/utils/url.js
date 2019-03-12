@@ -1,0 +1,19 @@
+export default {
+  login: () => '/auth/login', // POST
+  signup: () => '/auth/signup', // POST
+  fetchNotices: () => '/v1/notices', // GET
+  deleteNotice: id => `/v1/notices/${id}`, // DELETE
+  fetchSubscriptions: () => '/v1/subscriptions', // GET
+  subscribe: () => '/v1/subscriptions', // POST
+  unsubscribe: id => `/v1/subscriptions/${id}`, // DELETE
+  fetchSearchResults: searchQuery => `/v1/search${searchQuery}`, // GET
+  fetchCategory: id => `/v1/category?cid=${id}`, // GET 根据query cid来判断是哪个分类的数据
+  fetchNewsList: id => `/v1/news?cid=${id}`, // GET 根据query cid来判断取哪个分类的新闻
+  fetchFeedNewsList: feed => `/v1/feedNews?feed=${feed}`, // GET 根据query feed来判断取哪个推送栏目的新闻
+  fetchVotedNewsList: v => `/v1/votedNews?v=${v}`, // GET 根据query v来判断取的是upvoted还是downvoted
+  fetchSavedNewsList: () => '/v1/savedNews', // GET
+  fetchHiddenNewsList: () => '/v1/hiddenNews', // GET
+  voteNews: () => '/v1/votedNews', // POST body带上state字段，upvote是1，downvote是-1
+  saveNews: () => '/v1/savedNews', // POST
+  hideNews: () => '/v1/hiddenNews', // POST
+};

@@ -1,67 +1,86 @@
-import Cookie from 'js-cookie';
 import {
-  FETCH_DATA,
-  POST_DATA,
-  DELETE_DATA,
+  FETCH,
+  POST,
+  DELETE,
   getAysncActionCreator,
 } from 'utils/createAsyncAction';
+import url from 'utils/url';
+import Auth from 'utils/Auth';
+import SearchHistory from 'utils/SearchHistory';
+import actionTypes from './actionTypes';
 import { schema as noticesSchema } from '../entities/notices';
 import { schema as subscriptionsSchema } from '../entities/subscriptions';
-import actionTypes from './actionTypes';
+import { fetchCategory, clearNewsList } from '../newsPanel/action';
+import { clearSearchResults, changeSearchResultById } from '../searchPanel/action';
 
-export const clearErrorMsg = () => ({
-  type: actionTypes.clearErrorMsg,
+export const clearError = () => ({
+  type: actionTypes.clearError,
 });
 
-export const login = (username, password) => (dispatch) => {
+export const login = (email, password) => (dispatch) => {
   const createLogin = getAysncActionCreator(
-    POST_DATA,
+    POST,
     actionTypes.login,
-    { withoutErrorResponse: true },
   );
-  return dispatch(createLogin('/login', {
-    username,
+  return dispatch(createLogin(url.login(), {
+    email,
     password,
   }))
-    .then((action) => {
-      const user = action.payload;
-      if (user) {
-        // 一旦页面刷新登录状态可能会重置，为此需要在登录成功后向cookie中添加一个user字段标识「已登录」
-        Cookie.set('user', JSON.stringify(user));
-        // 保存用户信息
-        dispatch(saveUser(user));
+    .then(({ payload }) => {
+      const { token, user } = payload;
+      if (token && user) {
+        // 在本地存储token和user
+        Auth.authenticateUser(token, user);
+        // 设置用户信息
+        dispatch(setUser(user));
+
+        // 前两步完成才算成功登陆
+        dispatch({ type: actionTypes.userLoginSuccess });
+
         // 获取通知数据
         dispatch(fetchNotices());
         // 获取订阅数据
         dispatch(fetchSubscriptions());
       }
-    })
-    .catch(() => dispatch(setLoginErrorMsg()));
+    });
 };
 
-export const setLoginErrorMsg = () => ({
-  type: actionTypes.setLoginErrorMsg,
-  payload: 'login_failed',
-});
-
-export const clearLoginErrorMsg = () => ({
-  type: actionTypes.clearLoginErrorMsg,
-});
+export const signup = (email, username, password, confirmPassword) => (dispatch) => {
+  const createSignup = getAysncActionCreator(
+    POST,
+    actionTypes.signup,
+  );
+  return dispatch(createSignup(url.signup(), {
+    email,
+    username,
+    password,
+    confirmPassword,
+  }));
+};
 
 export const logout = () => (dispatch) => {
-  dispatch({ type: actionTypes.logout });
-  // 登出时需要清除cookie中的user字段
-  Cookie.remove('user');
+  // 清除本地存储的token和user
+  Auth.deauthenticateUser();
   // 清除用户信息
   dispatch(clearUser());
+
+  // 前两步完成才算成功登出
+  dispatch({ type: actionTypes.userLogoutSuccess });
+
   // 清除通知数据
   dispatch(clearNotices());
   // 清除订阅数据
   dispatch(clearSubscriptions());
+  // 清除本地存储的搜索记录
+  SearchHistory.clearSearchHistory();
+  // 清除新闻数据
+  dispatch(clearNewsList());
+  // 清除搜索数据
+  dispatch(clearSearchResults());
 };
 
-export const saveUser = user => ({
-  type: actionTypes.saveUser,
+export const setUser = user => ({
+  type: actionTypes.setUser,
   payload: user,
 });
 
@@ -71,19 +90,19 @@ export const clearUser = () => ({
 
 export const fetchNotices = () => (dispatch) => {
   const createFetchNotices = getAysncActionCreator(
-    FETCH_DATA,
+    FETCH,
     actionTypes.fetchNotices,
     noticesSchema,
   );
-  return dispatch(createFetchNotices('/notices'));
+  return dispatch(createFetchNotices(url.fetchNotices()));
 };
 
 export const deleteNotice = id => (dispatch) => {
   const createDeleteNotice = getAysncActionCreator(
-    DELETE_DATA,
+    DELETE,
     actionTypes.deleteNotice,
   );
-  return dispatch(createDeleteNotice(`/notices/${id}`))
+  return dispatch(createDeleteNotice(url.deleteNotice(id)))
     .then(() => dispatch(fetchNotices())); // 删除通知后重新请求通知数据
 };
 
@@ -93,30 +112,36 @@ export const clearNotices = () => ({
 
 export const fetchSubscriptions = () => (dispatch) => {
   const createFetchSubscriptions = getAysncActionCreator(
-    FETCH_DATA,
+    FETCH,
     actionTypes.fetchSubscriptions,
     subscriptionsSchema,
   );
-  return dispatch(createFetchSubscriptions('/subscriptions'));
+  return dispatch(createFetchSubscriptions(url.fetchSubscriptions()));
 };
 
-export const unsubscribe = id => (dispatch) => {
-  const createUnsubscribe = getAysncActionCreator(
-    DELETE_DATA,
-    actionTypes.unsubscribe,
-  );
-  return dispatch(createUnsubscribe(`/subscriptions/${id}`))
-    .then(() => dispatch(fetchSubscriptions()));
-};
+export const clearSubscriptionById = id => ({
+  type: actionTypes.clearSubscriptionById,
+  payload: id,
+});
 
 export const clearSubscriptions = () => ({
   type: actionTypes.clearSubscriptions,
 });
 
-export const selectView = view => ({
-  type: actionTypes.selectView,
-  payload: view,
-});
+export const unsubscribe = id => (dispatch) => {
+  const createUnsubscribe = getAysncActionCreator(
+    DELETE,
+    actionTypes.unsubscribe,
+  );
+  return dispatch(createUnsubscribe(url.unsubscribe(id)))
+    .then(() => {
+      dispatch(fetchCategory(id)); // 重新获取分类数据
+      dispatch(clearSubscriptionById(id)); // 清除当前订阅
+      dispatch(changeSearchResultById(id, {
+        subscribed: false, // 同步更新searchPanel里的搜索结果
+      }));
+    });
+};
 
 export const setNavigatorBar = (icon, title) => ({
   type: actionTypes.setNavigatorBar,

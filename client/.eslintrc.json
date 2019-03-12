@@ -15,7 +15,9 @@
     "no-console": "off",
     "no-param-reassign": "off",
     "func-names": "off",
-    "prefer-arrow-callback": "off"
+    "prefer-arrow-callback": "off",
+    "prefer-promise-reject-errors": "off",
+    "no-underscore-dangle": "off"
   },
   "settings": {
     "import/resolver": {

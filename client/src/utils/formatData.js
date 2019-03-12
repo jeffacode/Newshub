@@ -3,7 +3,7 @@ import reduce from 'lodash/reduce';
 
 /**
  * 格式化数据
- * @param {Array|Object} data 原始数据，可以是对象数组也可以是单个对象
+ * @param {Array} data 原始数据
  * @param {Object} schema 领域实体的schema
  */
 const formatData = (data, schema) => {
@@ -23,10 +23,7 @@ const formatData = (data, schema) => {
     );
   }
   return {
-    [name]: {
-      [data[id]]: data,
-    },
-    ids: [data[id]],
+    [name]: data,
   };
 };
 

@@ -1,13 +1,13 @@
 export const schema = {
   name: 'category',
-  id: 'name',
+  id: 'id',
 };
 
 const initialState = {};
 
 const reducer = (state = initialState, action) => {
-  if (action.response && action.response[schema.name]) {
-    return action.response[schema.name];
+  if (action.data && action.data[schema.name]) {
+    return action.data[schema.name];
   }
   return state;
 };

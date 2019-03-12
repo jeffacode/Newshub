@@ -73,4 +73,9 @@ $current: 5;
 
 .ant-menu {
   border-right: none;
+  background: $grey-2;
+
+  .ant-menu-sub {
+    background: $grey-2;
+  }
 }

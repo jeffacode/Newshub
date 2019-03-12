@@ -1,0 +1,5 @@
+{
+  "version": "0.1.0",
+  "mongoDbUri": "mongodb://localhost:27017/newshub",
+  "jwtSecret": "a secret phrase!!"
+}

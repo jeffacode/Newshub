@@ -1,24 +1,18 @@
-// 自带模块
 const path = require('path');
-
-// 第三方模块
 const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const serverConfig = require('../server/server.config.json');
 
-// 私有模块
-const pkg = require('./package.json');
-
-// 预设变量
 const ENV = process.env.NODE_ENV || 'development';
 const IS_PROD = ENV === 'production';
-const VERSION = `v${pkg.version}`;
+const VERSION = `v${serverConfig.version}`;
 const ASSET_PATH = process.env.ASSET_PATH || '/'; // 可以改成放置静态资源的CDN地址
 const SOURCE_DIR = path.resolve(__dirname, 'src');
-const OUTPUT_DIR = path.resolve(__dirname, 'build');
-const CLIENT_DIR = path.join(OUTPUT_DIR, VERSION);
+const BUILD_DIR = path.resolve(__dirname, 'build');
+const OUTPUT_PATH = path.join(BUILD_DIR, VERSION);
 
 module.exports = {
   mode: ENV,
@@ -28,9 +22,9 @@ module.exports = {
     app: './index.js',
   },
   output: {
-    path: CLIENT_DIR,
+    path: OUTPUT_PATH,
     publicPath: ASSET_PATH,
-    filename: 'assets/[name].[hash:8].js',
+    filename: 'assets/js/[name].[hash:8].js',
   },
   optimization: {
     runtimeChunk: {
@@ -200,7 +194,7 @@ module.exports = {
       filename: 'index.html',
       template: './index.ejs',
     }),
-    new CleanWebpackPlugin(OUTPUT_DIR),
+    new CleanWebpackPlugin(OUTPUT_PATH),
     new webpack.HotModuleReplacementPlugin(),
   ],
   devtool: IS_PROD ? 'cheap-module-source-map' : 'cheap-module-eval-source-map',

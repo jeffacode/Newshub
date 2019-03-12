@@ -1,74 +1,122 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { withRouter } from 'react-router-dom';
 import { injectIntl } from 'components/IntlContext';
 import { connect } from 'react-redux';
-import Cookie from 'js-cookie';
-import {
-  Input, Icon, Button,
-} from 'antd';
-import { login, clearLoginErrorMsg } from 'redux/modules/app/action';
-import { getIsLogin, getLoginErrorMsg } from 'redux/modules/app/reducer';
+import Auth from 'utils/Auth';
+import { signup } from 'redux/modules/app/action';
+import { getError } from 'redux/modules/app/reducer';
+import { Input, Icon, Button } from 'antd';
 import logo from 'assets/logo.png';
 import './style.scss';
 
 class Signup extends Component {
   state = {
+    email: '',
     username: '',
     password: '',
+    confirmPassword: '',
   };
 
   onInputChange = (e, key) => {
     this.setState({ [key]: e.target.value });
   }
 
-  handleLogin = () => {
-    const { login } = this.props;
-    const { username, password } = this.state;
-    login(username, password);
+  signup = () => {
+    const { signup } = this.props;
+    const {
+      email, username, password, confirmPassword,
+    } = this.state;
+    signup(email, username, password, confirmPassword);
   }
 
   updateLocale = (locale) => {
     const { intl } = this.props;
     intl.updateLocale(locale);
-    Cookie.set('locale', locale); // 同时更新cookie中的locale字段
+    Auth.storeLocale(locale);
   }
 
-  renderLoginPanel = () => {
-    const { intl } = this.props;
-    const { username, password } = this.state;
+  renderSignupPanel = () => {
+    const { error: { errors }, intl } = this.props;
+    const {
+      email, username, password, confirmPassword,
+    } = this.state;
     return (
-      <div className="login__loginPanel">
-        <div className="login__appInfo">
-          <img className="login__appLogo" src={logo} alt="logo" />
+      <div className="signup__signupPanel">
+        <div className="signup__appInfo">
+          <img className="signup__appLogo" src={logo} alt="logo" />
         </div>
-        <div className="login__appDesc">
-          {intl.formatMessage({ id: 'login_appDesc' })}
+        <div className="signup__appDesc">
+          {intl.formatMessage({ id: 'appDesc' })}
         </div>
-        <Input
-          className="login__loginInput"
-          style={{ height: 40, marginBottom: 24 }}
-          placeholder={intl.formatMessage({ id: 'login_usernameInput_placeholder' })}
-          type="text"
-          prefix={<Icon type="user" style={{ color: 'rgba(0, 0, 0, .25)' }} />}
-          value={username}
-          onChange={e => this.onInputChange(e, 'username')}
-          onPressEnter={this.handleLogin}
-        />
-        <Input
-          className="login__loginInput"
-          placeholder={intl.formatMessage({ id: 'login_passwordInput_placeholder' })}
-          type="password"
-          prefix={<Icon type="lock" style={{ color: 'rgba(0, 0, 0, .25)' }} />}
-          value={password}
-          onChange={e => this.onInputChange(e, 'password')}
-          onPressEnter={this.handleLogin}
-        />
+        <div className="signup__signupInput">
+          <Input
+            style={{ height: 40, marginBottom: 24 }}
+            placeholder={intl.formatMessage({ id: 'emailInput_placeholder' })}
+            type="email"
+            prefix={<Icon type="mail" style={{ color: 'rgba(0, 0, 0, .25)' }} />}
+            value={email}
+            onChange={e => this.onInputChange(e, 'email')}
+            onPressEnter={this.signup}
+          />
+          {(errors && errors.email) && (
+            <div className="signup__signupInput--error">
+              {errors.email}
+            </div>
+          )}
+        </div>
+        <div className="signup__signupInput">
+          <Input
+            style={{ height: 40, marginBottom: 24 }}
+            placeholder={intl.formatMessage({ id: 'usernameInput_placeholder' })}
+            type="text"
+            prefix={<Icon type="user" style={{ color: 'rgba(0, 0, 0, .25)' }} />}
+            value={username}
+            onChange={e => this.onInputChange(e, 'username')}
+            onPressEnter={this.signup}
+          />
+          {(errors && errors.username) && (
+            <div className="signup__signupInput--error">
+              {errors.username}
+            </div>
+          )}
+        </div>
+        <div className="signup__signupInput">
+          <Input
+            style={{ height: 40, marginBottom: 24 }}
+            placeholder={intl.formatMessage({ id: 'passwordInput_placeholder' })}
+            type="password"
+            prefix={<Icon type="lock" style={{ color: 'rgba(0, 0, 0, .25)' }} />}
+            value={password}
+            onChange={e => this.onInputChange(e, 'password')}
+            onPressEnter={this.signup}
+          />
+          {(errors && errors.password) && (
+            <div className="signup__signupInput--error">
+              {errors.password}
+            </div>
+          )}
+        </div>
+        <div className="signup__signupInput">
+          <Input
+            style={{ height: 40, marginBottom: 24 }}
+            placeholder={intl.formatMessage({ id: 'confirmPasswordInput_placeholder' })}
+            type="password"
+            prefix={<Icon type="lock" style={{ color: 'rgba(0, 0, 0, .25)' }} />}
+            value={confirmPassword}
+            onChange={e => this.onInputChange(e, 'confirmPassword')}
+            onPressEnter={this.signup}
+          />
+          {(errors && errors.confirmPassword) && (
+            <div className="signup__signupInput--error">
+              {errors.confirmPassword}
+            </div>
+          )}
+        </div>
         <Button
-          className="login__loginBtn"
+          className="signup__signupBtn"
           type="primary"
-          onClick={this.handleLogin}
+          onClick={this.signup}
         >
           {intl.formatMessage({ id: 'signup' })}
         </Button>
@@ -79,24 +127,24 @@ class Signup extends Component {
   renderIntlSwitch = () => {
     const { intl } = this.props;
     return (
-      <div className="login__intlSwitch">
+      <div className="signup__intlSwitch">
         <span
           className={classnames({
-            login__intlItem: true,
-            'login__intlItem--active': intl.locale === 'en-us',
+            signup__intlItem: true,
+            'signup__intlItem--active': intl.locale === 'en-us',
           })}
           onClick={() => this.updateLocale('en-us')}
           role="presentation"
         >
           English
         </span>
-        <span className="login__intlSwitchSeparator">
+        <span className="signup__intlSwitchSeparator">
           |
         </span>
         <span
           className={classnames({
-            login__intlItem: true,
-            'login__intlItem--active': intl.locale === 'zh-cn',
+            signup__intlItem: true,
+            'signup__intlItem--active': intl.locale === 'zh-cn',
           })}
           onClick={() => this.updateLocale('zh-cn')}
           role="presentation"
@@ -107,52 +155,31 @@ class Signup extends Component {
     );
   }
 
-  renderLoginErrorMsg = () => {
-    const { loginErrorMsg, clearLoginErrorMsg, intl } = this.props;
-    if (loginErrorMsg) {
-      const timer = setTimeout(() => {
-        clearLoginErrorMsg();
-        clearTimeout(timer);
-      }, 1000);
-
-      return (
-        <div className="login__errorMsg">
-          {intl.formatMessage({ id: loginErrorMsg })}
-        </div>
-      );
-    }
-    return null;
-  }
-
   render() {
     return (
-      <div className="login">
-        {this.renderLoginPanel()}
+      <div className="signup">
+        {this.renderSignupPanel()}
         {this.renderIntlSwitch()}
-        {this.renderLoginErrorMsg()}
       </div>
     );
   }
 }
 
 Signup.propTypes = {
-  loginErrorMsg: PropTypes.string.isRequired,
-  login: PropTypes.func.isRequired,
-  clearLoginErrorMsg: PropTypes.func.isRequired,
+  error: PropTypes.object.isRequired,
+  signup: PropTypes.func.isRequired,
   intl: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
-  isLogin: getIsLogin(state),
-  loginErrorMsg: getLoginErrorMsg(state),
+  error: getError(state),
 });
 
 const mapDispatchToProps = {
-  login,
-  clearLoginErrorMsg,
+  signup,
 };
 
-export default withRouter(injectIntl(connect(
+export default injectIntl(connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Signup)));
+)(Signup));

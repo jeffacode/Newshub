@@ -4,152 +4,244 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'components/IntlContext';
 import map from 'lodash/map';
 import {
-  // getIsLogin, // 一些功能需要登录才能操作
-  getSelectedView, // 根据选择的视图切换
-} from 'redux/modules/app/reducer';
-import {
-  getNews,
-} from 'redux/modules/newsPanel/reducer';
-import { setNavigatorBar } from 'redux/modules/app/action';
-import {
-  fetchNews,
-  clearNews,
+  fetchNewsList,
+  fetchFeedNewsList,
+  fetchVotedNewsList,
+  fetchSavedNewsList,
+  fetchHiddenNewsList,
+  clearNewsList,
   fetchCategory,
   voteNews,
   saveNews,
   hideNews,
 } from 'redux/modules/newsPanel/action';
+import {
+  setNavigatorBar,
+} from 'redux/modules/app/action';
+import {
+  getNewsList,
+  getCategory,
+} from 'redux/modules/newsPanel/reducer';
+import views from 'constant/views';
+import popularities from 'constant/popularities';
+import times from 'constant/times';
+import feeds from 'constant/feeds';
 import NewsItem from './components/NewsItem';
-import './style.scss';
+import NewsHeader from './components/NewsHeader';
 
 class NewsPanel extends Component {
   constructor(props) {
     super(props);
-    const { match: { params } } = props;
     const {
-      category,
-      subCategory,
-    } = params;
+      match: { params: { cid, profile } },
+    } = props;
     this.state = {
-      category,
-      subCategory,
+      cid,
+      profile,
+      selectedView: views[0],
+      selectedPopularity: popularities[0],
+      selectedTime: times[0],
     };
   }
 
   componentDidMount() {
     const {
-      match: { params },
-      fetchNews,
-      clearNews,
+      history,
+      match: { params: { cid, username, profile } },
+      location: { pathname },
       fetchCategory,
       setNavigatorBar,
+      fetchNewsList,
+      fetchFeedNewsList,
+      fetchVotedNewsList,
+      fetchSavedNewsList,
+      fetchHiddenNewsList,
+      clearNewsList,
     } = this.props;
-    const {
-      category,
-      username,
-      subCategory,
-    } = params;
 
-    // 清除新闻数据
-    clearNews();
+    clearNewsList(); // 清除新闻数据
 
-    // 在新闻分类页
-    if (category) {
-      // 获取分类信息
-      fetchCategory(category);
-      // 获取新闻数据
-      fetchNews({ category });
+    // 如果在新闻分类页
+    if (cid) {
+      // 获取当前分类数据
+      fetchCategory(cid)
+        .then(({ data: { category } }) => {
+          if (category) {
+            const { id, icon } = category;
+            setNavigatorBar(icon, `c/${id}`); // 设置导航栏内容
+          } else {
+            // 如果此分类不存在就跳到404
+            history.push('/404');
+          }
+        });
+      // 获取当前分类下的所有新闻数据
+      fetchNewsList(cid);
     }
 
-    // 在用户档案页
-    if (subCategory) {
-      setNavigatorBar('user', `/u/${username}`); // 应该是获取用户信息，这边比较简略
-      // 获取新闻数据
-      switch (subCategory) {
-        case 'saved':
-          fetchNews({ saved: true });
-          break;
-        case 'hidden':
-          fetchNews({ hidden: true });
-          break;
+    // 如果在用户档案页
+    if (profile) {
+      setNavigatorBar('user', `u/${username}`); // 设置导航栏内容
+      // 获取不同档案页的新闻数据
+      switch (profile) {
         case 'upvoted':
-          fetchNews({ voted: 1 });
+          fetchVotedNewsList(1);
           break;
         case 'downvoted':
-          fetchNews({ voted: -1 });
+          fetchVotedNewsList(-1);
+          break;
+        case 'saved':
+          fetchSavedNewsList();
+          break;
+        case 'hidden':
+          fetchHiddenNewsList();
           break;
         default:
+          // 不是上述任意一个选项就跳到404
+          history.push('/404');
       }
+    }
+
+    // 如果在新闻推送页
+    switch (pathname) {
+      case '/home':
+        setNavigatorBar(feeds[0].icon, feeds[0].id); // 设置导航栏内容
+        fetchFeedNewsList('home'); // 获取当前推送栏目的新闻数据
+        break;
+      case '/popular':
+        setNavigatorBar(feeds[1].icon, feeds[1].id);
+        fetchFeedNewsList('popular');
+        break;
+      case '/all':
+        setNavigatorBar(feeds[2].icon, feeds[2].id);
+        fetchFeedNewsList('all');
+        break;
+      default:
     }
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const {
-      match: { params },
-      fetchNews,
-      clearNews,
+      match: { params: { cid, profile } },
       fetchCategory,
+      fetchNewsList,
+      fetchVotedNewsList,
+      fetchSavedNewsList,
+      fetchHiddenNewsList,
+      setNavigatorBar,
+      clearNewsList,
     } = nextProps;
-    const {
-      category,
-      subCategory,
-    } = params;
 
-    if (category !== prevState.category) {
-      clearNews();
-      fetchNews({ category });
-      fetchCategory(category);
-      return { category };
+    // 如果在新闻分类页
+    if (cid !== prevState.cid) {
+      clearNewsList(); // 必须先清除新闻数据
+      fetchCategory(cid)
+        .then(({ data: { category } }) => {
+          const { id, icon } = category;
+          setNavigatorBar(icon, `c/${id}`);
+        });
+      fetchNewsList(cid);
+      return { cid };
     }
 
-    if (subCategory !== prevState.subCategory) {
-      clearNews();
-      switch (subCategory) {
-        case 'saved':
-          fetchNews({ saved: true });
-          break;
-        case 'hidden':
-          fetchNews({ hidden: true });
-          break;
+    // 如果在用户档案页
+    if (profile !== prevState.profile) {
+      clearNewsList(); // 必须先清除新闻数据
+      switch (profile) {
         case 'upvoted':
-          fetchNews({ voted: 1 });
+          fetchVotedNewsList(1);
           break;
         case 'downvoted':
-          fetchNews({ voted: -1 });
+          fetchVotedNewsList(-1);
+          break;
+        case 'saved':
+          fetchSavedNewsList();
+          break;
+        case 'hidden':
+          fetchHiddenNewsList();
           break;
         default:
       }
-      return { subCategory };
+      return { profile };
     }
+
     return null;
+  }
+
+  selectView = (view) => {
+    this.setState({
+      selectedView: view,
+    });
+  }
+
+  selectPopularity = (popularity) => {
+    this.setState({
+      selectedPopularity: popularity,
+    });
+  }
+
+  selectTime = (time) => {
+    this.setState({
+      selectedTime: time,
+    });
   }
 
   render() {
     const {
-      news,
-      view: { type },
+      match: { params: { cid } },
+      location: { pathname },
+      category,
+      newsList,
       voteNews,
       saveNews,
       hideNews,
       intl,
+      history,
     } = this.props;
-    const { category } = this.state;
+    const {
+      selectedView,
+      selectedPopularity,
+      selectedTime,
+    } = this.state;
     return (
       <div className="newsPanel">
-        {map(news, (item) => {
-          const { id, hidden } = item;
-          if (category && hidden) { // 只有在新闻分类页且已隐藏时才不显示
+        <NewsHeader
+          cid={cid}
+          category={category}
+          selectedView={selectedView}
+          selectedPopularity={selectedPopularity}
+          selectedTime={selectedTime}
+          selectView={this.selectView}
+          selectPopularity={this.selectPopularity}
+          selectTime={this.selectTime}
+          intl={intl}
+        />
+        {map(newsList, (news) => {
+          const { id, hidden } = news;
+
+          // 在新闻分类页且已隐藏时不显示
+          if (cid && hidden) {
             return null;
           }
+
+          // 在新闻推送页且已隐藏时不显示
+          if (hidden && (
+            pathname === '/home'
+            || pathname === '/popular'
+            || pathname === '/all'
+          )) {
+            return null;
+          }
+
           return (
             <NewsItem
               key={id}
-              type={type}
-              item={item}
+              view={selectedView}
+              news={news}
               voteNews={voteNews}
               saveNews={saveNews}
               hideNews={hideNews}
               intl={intl}
+              history={history}
             />
           );
         })}
@@ -159,32 +251,42 @@ class NewsPanel extends Component {
 }
 
 NewsPanel.propTypes = {
-  news: PropTypes.array.isRequired,
-  view: PropTypes.object.isRequired,
-  fetchNews: PropTypes.func.isRequired,
-  clearNews: PropTypes.func.isRequired,
+  category: PropTypes.object.isRequired,
+  newsList: PropTypes.array.isRequired,
   fetchCategory: PropTypes.func.isRequired,
+  setNavigatorBar: PropTypes.func.isRequired,
+  fetchNewsList: PropTypes.func.isRequired,
+  fetchFeedNewsList: PropTypes.func.isRequired,
+  fetchVotedNewsList: PropTypes.func.isRequired,
+  fetchSavedNewsList: PropTypes.func.isRequired,
+  fetchHiddenNewsList: PropTypes.func.isRequired,
+  clearNewsList: PropTypes.func.isRequired,
   voteNews: PropTypes.func.isRequired,
   saveNews: PropTypes.func.isRequired,
   hideNews: PropTypes.func.isRequired,
-  setNavigatorBar: PropTypes.func.isRequired,
   intl: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
-  news: getNews(state),
-  view: getSelectedView(state),
+  category: getCategory(state),
+  newsList: getNewsList(state),
 });
 
 const mapDispatchToProps = {
-  fetchNews,
-  clearNews,
   fetchCategory,
+  setNavigatorBar,
+  fetchNewsList,
+  fetchFeedNewsList,
+  fetchVotedNewsList,
+  fetchSavedNewsList,
+  fetchHiddenNewsList,
+  clearNewsList,
   voteNews,
   saveNews,
   hideNews,
-  setNavigatorBar,
 };
 
 export default injectIntl(connect(

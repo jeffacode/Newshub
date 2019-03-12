@@ -8,13 +8,14 @@ export const schema = {
 const initialState = {};
 
 const reducer = (state = initialState, action) => {
-  if (action.response && action.response[schema.name]) {
-    return action.response[schema.name]; // 通知数据并不是分页获取的，因此直接覆盖旧数据
+  if (action.data && action.data[schema.name]) {
+    return action.data[schema.name]; // 通知数据并不是分页获取的，因此直接覆盖旧数据
   }
-  // 登出时恢复到初始状态
+
   if (action.type === actionTypes.clearNotices) {
-    return initialState;
+    return initialState; // 登出时恢复到初始状态
   }
+
   return state;
 };
 

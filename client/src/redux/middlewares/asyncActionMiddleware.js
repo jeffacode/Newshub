@@ -1,9 +1,9 @@
 import {
   ASYNC_ACTION,
-  FETCH_DATA,
-  POST_DATA,
-  CHANGE_DATA,
-  DELETE_DATA,
+  FETCH,
+  POST,
+  PATCH,
+  DELETE,
 } from 'utils/createAsyncAction';
 import request from 'utils/request';
 import formatData from 'utils/formatData';
@@ -20,7 +20,6 @@ const asyncActionMiddleware = () => next => (action) => {
     schema,
     url,
     data,
-    config,
   } = callAPI;
 
   if (!asyncType) {
@@ -29,7 +28,7 @@ const asyncActionMiddleware = () => next => (action) => {
   if (!types) {
     throw new Error('Types must be given.');
   }
-  if (asyncType === FETCH_DATA && withoutResponse) {
+  if (asyncType === FETCH) {
     if (!schema) {
       throw new Error('Entity schema must be given when fetching data.');
     } else {
@@ -58,58 +57,49 @@ const asyncActionMiddleware = () => next => (action) => {
     throw new Error('failureType must be given.');
   }
 
-  // withoutResponse为true时，FETCH_DATA请求成功后并不会发送带有response字段的action
-  // withoutErrorResponse为true时，请求失败后不会发送带有errorResponse字段的action
-  const { withoutResponse, withoutErrorResponse } = config;
-
-  const handleResponse = (response) => {
-    if (asyncType === FETCH_DATA && !withoutResponse) {
+  const handleData = (data) => {
+    if (asyncType === FETCH) {
       return next({
         type: successType,
-        response: formatData(response, schema), // entity reducer会进一步处理带有此字段的action
+        data: formatData(data, schema),
       });
     }
     return next({
       type: successType,
-      payload: response, // 否则只发带有payload字段的一般action
+      payload: data,
     });
   };
 
-  const handleError = (error) => {
-    if (!withoutErrorResponse) {
-      return next({
-        type: failureType,
-        errorResponse: error.message, // app reducer会进一步处理带有此字段的action
-      });
-    }
-    return Promise.reject(next({ // 否则返回一个rejected的Promise对象，以便进一步catch处理
+  const handleError = error => Promise.reject(
+    next({
       type: failureType,
-    }));
-  };
+      error,
+    }),
+  );
 
   next({
     type: requestType,
   });
 
   switch (asyncType) {
-    case FETCH_DATA:
+    case FETCH:
       return request.get(url, data)
-        .then(handleResponse)
+        .then(handleData)
         .catch(handleError);
-    case POST_DATA:
+    case POST:
       return request.post(url, data)
-        .then(handleResponse)
+        .then(handleData)
         .catch(handleError);
-    case CHANGE_DATA:
+    case PATCH:
       return request.patch(url, data)
-        .then(handleResponse)
+        .then(handleData)
         .catch(handleError);
-    case DELETE_DATA:
+    case DELETE:
       return request.delete(url)
-        .then(handleResponse)
+        .then(handleData)
         .catch(handleError);
     default:
-      throw new Error(`AsyncType cannot match any of ${FETCH_DATA}/${POST_DATA}/${CHANGE_DATA}/${DELETE_DATA}.`);
+      throw new Error(`AsyncType cannot match any of ${FETCH}/${POST}/${PATCH}/${DELETE}.`);
   }
 };
 

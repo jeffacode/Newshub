@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import getTime, { padLeft } from 'utils/getTime';
@@ -7,6 +7,9 @@ import {
   Icon,
   Menu,
   Dropdown,
+  Tag,
+  Tooltip,
+  Modal,
 } from 'antd';
 import './style.scss';
 
@@ -24,86 +27,143 @@ const formatPublishedTime = (publishedTime) => {
   }
 };
 
-const strategies = {
-  [-1]: {
-    1: [1, 2],
-    [-1]: [0, 1],
-  },
-  0: {
-    1: [1, 1],
-    [-1]: [-1, -1],
-  },
-  1: {
-    1: [0, -1],
-    [-1]: [-1, -2],
-  },
-};
-
 class NewsItem extends Component {
-  constructor(props) {
-    super(props);
-    const { item: { voted } } = props;
-    this.state = {
-      prevVoted: voted,
-    };
+  state = {
+    isShareModalVisible: false,
+    isReportModalVisible: false,
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const { item: { voted } } = nextProps;
-    if (voted !== prevState.prevVoted) {
-      return {
-        prevVoted: voted, // 只有数据中的voted变化了才去更新state
-      };
-    }
-    return null;
-  }
-
-  voteNews = (e, id, state) => {
+  voteNews = (e, state) => {
     e.stopPropagation();
-    const { item: { votes }, voteNews } = this.props;
-    const { prevVoted } = this.state;
-    const strategy = strategies[prevVoted][state];
-    voteNews(id, {
-      votes: votes + strategy[1],
-      voted: strategy[0],
+    const { news: { id, votes, voted }, voteNews } = this.props;
+    voteNews(id, votes, voted, state);
+  }
+
+  saveNews = (e) => {
+    e.stopPropagation();
+    const { saveNews, news: { id, saved } } = this.props;
+    saveNews(id, !saved);
+  }
+
+  hideNews = (e) => {
+    e.stopPropagation();
+    const { hideNews, news: { id, hidden } } = this.props;
+    hideNews(id, !hidden);
+  }
+
+  onNewsItemClick = (url) => {
+    window.open(url);
+  }
+
+  showShareNewsModal = (e) => {
+    e.stopPropagation();
+    this.setState({
+      isShareModalVisible: true,
     });
   }
 
-  shareNews = (e, id) => {
+  onShareNewsOk = (e) => {
     e.stopPropagation();
-    console.log(id); // 跳弹窗
-  }
-
-  saveNews = (e, id) => {
-    e.stopPropagation();
-    const { saveNews, item: { saved } } = this.props;
-    saveNews(id, {
-      saved: !saved,
+    this.setState({
+      isShareModalVisible: false,
     });
   }
 
-  hideNews = (e, id) => {
+  onShareNewsCancel = (e) => {
     e.stopPropagation();
-    const { hideNews, item: { hidden } } = this.props;
-    hideNews(id, {
-      hidden: !hidden,
+    this.setState({
+      isShareModalVisible: false,
     });
   }
 
-  reportNews = (e, id) => {
+  showReportNewsModal = (e) => {
     e.stopPropagation();
-    console.log(id); // 跳弹窗
+    this.setState({
+      isReportModalVisible: true,
+    });
+  }
+
+  onReportNewsOk = (e) => {
+    e.stopPropagation();
+    this.setState({
+      isReportModalVisible: false,
+    });
+  }
+
+  onReportNewsCancel = (e) => {
+    e.stopPropagation();
+    this.setState({
+      isReportModalVisible: false,
+    });
+  }
+
+  renderShareNewsModal = () => {
+    const { isShareModalVisible } = this.state;
+    const { news: { title }, intl } = this.props;
+    return (
+      <Modal
+        title={intl.formatMessage({ id: 'modal_share_title' })}
+        visible={isShareModalVisible}
+        okText={intl.formatMessage({ id: 'modal_share_ok' })}
+        cancelText={intl.formatMessage({ id: 'modal_cancel' })}
+        onOk={this.onShareNewsOk}
+        onCancel={this.onShareNewsCancel}
+      >
+        <div className="newsItem__shareModal__title">{title}</div>
+        <div className="newsItem__shareModal__content">
+          <div className="newsItem__shareModal__icon">
+            <Tooltip title={intl.formatMessage({ id: 'modal_share_weibo' })}>
+              <Icon type="weibo" />
+            </Tooltip>
+          </div>
+          <div className="newsItem__shareModal__icon">
+            <Tooltip title={intl.formatMessage({ id: 'modal_share_wechat' })}>
+              <Icon type="wechat" />
+            </Tooltip>
+          </div>
+          <div className="newsItem__shareModal__icon">
+            <Tooltip title={intl.formatMessage({ id: 'modal_share_qq' })}>
+              <Icon type="qq" />
+            </Tooltip>
+          </div>
+          <div className="newsItem__shareModal__icon">
+            <Tooltip title={intl.formatMessage({ id: 'modal_share_twitter' })}>
+              <Icon type="twitter" />
+            </Tooltip>
+          </div>
+        </div>
+      </Modal>
+    );
+  }
+
+  renderReportNewsModal = () => {
+    const { isReportModalVisible } = this.state;
+    const { intl } = this.props;
+    return (
+      <Modal
+        title={intl.formatMessage({ id: 'modal_share_title' })}
+        visible={isReportModalVisible}
+        okText={intl.formatMessage({ id: 'modal_share_ok' })}
+        cancelText={intl.formatMessage({ id: 'modal_cancel' })}
+        onOk={this.onReportNewsOk}
+        onCancel={this.onReportNewsCancel}
+      >
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+      </Modal>
+    );
   }
 
   renderNewsItemBtns = () => {
-    const { item, intl } = this.props;
-    const { id, saved, hidden } = item;
+    const { news, intl } = this.props;
+    const { saved, hidden } = news;
 
     return (
       <div className="newsItem_btns">
         <span
           className="newsItem__btn pd-5"
-          onClick={e => this.shareNews(e, id)}
+          onClick={this.showShareNewsModal}
           role="presentation"
         >
           <Icon type="share-alt" />
@@ -111,7 +171,7 @@ class NewsItem extends Component {
         </span>
         <span
           className="newsItem__btn ml-20 pd-5"
-          onClick={e => this.saveNews(e, id)}
+          onClick={this.saveNews}
           role="presentation"
         >
           <Icon
@@ -124,7 +184,7 @@ class NewsItem extends Component {
         </span>
         <span
           className="newsItem__btn ml-20 pd-5"
-          onClick={e => this.hideNews(e, id)}
+          onClick={this.hideNews}
           role="presentation"
         >
           <Icon
@@ -137,7 +197,7 @@ class NewsItem extends Component {
         </span>
         <span
           className="newsItem__btn ml-20 pd-5"
-          onClick={e => this.reportNews(e, id)}
+          onClick={this.showReportNewsModal}
           role="presentation"
         >
           <Icon type="flag" />
@@ -148,13 +208,13 @@ class NewsItem extends Component {
   }
 
   renderNewsItemDropdownBtn = () => {
-    const { item, intl } = this.props;
-    const { id, saved, hidden } = item;
+    const { news, intl } = this.props;
+    const { saved, hidden } = news;
     const menu = (
       <Menu>
         <Menu.Item>
           <div
-            onClick={e => this.shareNews(e, id)}
+            onClick={this.showShareNewsModal}
             role="presentation"
           >
             <Icon type="share-alt" />
@@ -163,7 +223,7 @@ class NewsItem extends Component {
         </Menu.Item>
         <Menu.Item>
           <div
-            onClick={e => this.saveNews(e, id)}
+            onClick={this.saveNews}
             role="presentation"
           >
             <Icon
@@ -177,7 +237,7 @@ class NewsItem extends Component {
         </Menu.Item>
         <Menu.Item>
           <div
-            onClick={e => this.hideNews(e, id)}
+            onClick={this.hideNews}
             role="presentation"
           >
             <Icon
@@ -191,7 +251,7 @@ class NewsItem extends Component {
         </Menu.Item>
         <Menu.Item>
           <div
-            onClick={e => this.reportNews(e, id)}
+            onClick={this.showReportNewsModal}
             role="presentation"
           >
             <Icon type="flag" />
@@ -214,22 +274,32 @@ class NewsItem extends Component {
     );
   }
 
+  onTagClick = (e) => {
+    e.stopPropagation();
+    const { news: { cid }, history } = this.props;
+    history.push(`/c/${cid}`);
+  }
+
   renderRightContentWithCardView = () => {
-    const { item, intl } = this.props;
+    const { news, intl } = this.props;
     const {
       id,
+      cid,
       source: { name },
       title,
       description,
       author,
       publishedAt,
       urlToImage,
-    } = item;
+    } = news;
     const formattedPublishedTime = formatPublishedTime(publishedAt);
 
     return (
       <div className="newsItem__rightContent">
-        <div className="newsItem__source">{name}</div>
+        <div className="newsItem__source">
+          <Tag color="#108ee9" onClick={this.onTagClick}>{cid}</Tag>
+          {name}
+        </div>
         <h2 className="newsItem__title ft-bold">{title}</h2>
         <div className="newsItem__desc mb-5">{description}</div>
         <div className="newsItem__img mb-5">
@@ -249,7 +319,7 @@ class NewsItem extends Component {
   }
 
   renderRightContentWithClassicView = () => {
-    const { item, intl } = this.props;
+    const { news, intl } = this.props;
     const {
       id,
       source: { name },
@@ -257,7 +327,7 @@ class NewsItem extends Component {
       author,
       publishedAt,
       urlToImage,
-    } = item;
+    } = news;
     const formattedPublishedTime = formatPublishedTime(publishedAt);
 
     return (
@@ -286,14 +356,14 @@ class NewsItem extends Component {
   }
 
   renderRightContentWithCompactView = () => {
-    const { item, intl } = this.props;
+    const { news, intl } = this.props;
     const {
       id,
       source: { name },
       title,
       author,
       publishedAt,
-    } = item;
+    } = news;
     const formattedPublishedTime = formatPublishedTime(publishedAt);
 
     return (
@@ -320,16 +390,16 @@ class NewsItem extends Component {
 
   renderLeftContent = () => {
     const {
-      item: { id, votes, voted },
+      news: { votes, voted },
     } = this.props;
-    const upvoteClassNames = classnames({
-      newsItem__upvote: true,
-      voted: voted === 1,
-    });
     const votesClassNames = classnames({
       newsItem__votes: true,
       upvoted: voted === 1,
       downvoted: voted === -1,
+    });
+    const upvoteClassNames = classnames({
+      newsItem__upvote: true,
+      voted: voted === 1,
     });
     const downvoteClassNames = classnames({
       newsItem__downvote: true,
@@ -340,7 +410,7 @@ class NewsItem extends Component {
       <div className="newsItem__leftContent">
         <div
           className={upvoteClassNames}
-          onClick={e => this.voteNews(e, id, 1)}
+          onClick={e => this.voteNews(e, 1)}
           role="presentation"
         >
           <Icon type="caret-up" />
@@ -348,7 +418,7 @@ class NewsItem extends Component {
         <div className={votesClassNames}>{formatNumber(votes)}</div>
         <div
           className={downvoteClassNames}
-          onClick={e => this.voteNews(e, id, -1)}
+          onClick={e => this.voteNews(e, -1)}
           role="presentation"
         >
           <Icon type="caret-down" />
@@ -357,40 +427,42 @@ class NewsItem extends Component {
     );
   }
 
-  onNewsItemClick = (url) => {
-    window.open(url);
-  }
-
   render() {
-    const { type, item } = this.props;
-    const { url } = item;
+    const { isShareModalVisible, isReportModalVisible } = this.state;
+    const { view: { type }, news } = this.props;
+    const { url } = news;
     const classNames = classnames({
       newsItem: true,
       [type]: true,
     });
 
     return (
-      <div
-        className={classNames}
-        onClick={() => this.onNewsItemClick(url)}
-        role="presentation"
-      >
-        {this.renderLeftContent()}
-        {type === 'card' && this.renderRightContentWithCardView()}
-        {type === 'classic' && this.renderRightContentWithClassicView()}
-        {type === 'compact' && this.renderRightContentWithCompactView()}
-      </div>
+      <Fragment>
+        <div
+          className={classNames}
+          onClick={() => this.onNewsItemClick(url)}
+          role="presentation"
+        >
+          {this.renderLeftContent()}
+          {type === 'card' && this.renderRightContentWithCardView()}
+          {type === 'classic' && this.renderRightContentWithClassicView()}
+          {type === 'compact' && this.renderRightContentWithCompactView()}
+        </div>
+        {isShareModalVisible && this.renderShareNewsModal()}
+        {isReportModalVisible && this.renderReportNewsModal()}
+      </Fragment>
     );
   }
 }
 
 NewsItem.propTypes = {
-  type: PropTypes.string.isRequired,
-  item: PropTypes.object.isRequired,
+  view: PropTypes.object.isRequired,
+  news: PropTypes.object.isRequired,
   voteNews: PropTypes.func.isRequired,
   saveNews: PropTypes.func.isRequired,
   hideNews: PropTypes.func.isRequired,
   intl: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
 export default NewsItem;

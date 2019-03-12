@@ -1,128 +1,128 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { injectIntl } from 'components/IntlContext';
 import {
   getIsLogin,
-  getErrorMsg,
+  getError,
   getUser,
   getNotices,
   getSubscriptions,
-  getSelectedView,
   getNavigatorBarContent,
 } from 'redux/modules/app/reducer';
 import {
-  clearErrorMsg,
+  clearError,
   logout,
   deleteNotice,
   unsubscribe,
-  selectView,
 } from 'redux/modules/app/action';
+import isEmpty from 'lodash/isEmpty';
 import AppSider from './components/AppSider';
 import AppHeader from './components/AppHeader';
 import ErrorToast from './components/ErrorToast';
 import './style.scss';
 
-const AppLayout = ({
-  isLogin,
-  errorMsg,
-  user,
-  notices,
-  subscriptions,
-  selectedView,
-  navigatorBarContent,
-  clearErrorMsg,
-  logout,
-  deleteNotice,
-  unsubscribe,
-  selectView,
-  intl,
-  location,
-  history,
-  children,
-}) => {
-  const { pathname } = location; // 当前URL
+class AppLayout extends Component {
+  render() {
+    const {
+      isLogin,
+      error,
+      user,
+      notices,
+      subscriptions,
+      navigatorBarContent,
+      location: { pathname, search },
+      clearError,
+      logout,
+      deleteNotice,
+      unsubscribe,
+      intl,
+      history,
+      children,
+    } = this.props;
 
-  return (
-    <div className="appLayout">
-      <div className="appLayout__sider">
-        <AppSider
-          isLogin={isLogin}
-          user={user}
-          logout={logout}
-          intl={intl}
-          url={pathname}
-          history={history}
-        />
-      </div>
-      <div className="appLayout__main">
-        <div className="appLayout__header">
-          <AppHeader
+    return (
+      <div className="appLayout">
+        <div className="appLayout__sider">
+          <AppSider
             isLogin={isLogin}
             user={user}
-            notices={notices}
-            subscriptions={subscriptions}
-            selectedView={selectedView}
-            navigatorBarContent={navigatorBarContent}
-            deleteNotice={deleteNotice}
-            unsubscribe={unsubscribe}
-            selectView={selectView}
+            logout={logout}
             intl={intl}
+            url={pathname}
             history={history}
           />
         </div>
-        <div className="appLayout__content">
-          {children}
+        <div className="appLayout__main">
+          {
+            isLogin && (
+              <div className="appLayout__header">
+                <AppHeader
+                  isLogin={isLogin}
+                  user={user}
+                  notices={notices}
+                  subscriptions={subscriptions}
+                  navigatorBarContent={navigatorBarContent}
+                  searchQuery={search}
+                  deleteNotice={deleteNotice}
+                  unsubscribe={unsubscribe}
+                  intl={intl}
+                  history={history}
+                />
+              </div>
+            )
+          }
+          <div className="appLayout__content">
+            {children}
+          </div>
         </div>
+        {!isEmpty(error) && (
+          <ErrorToast
+            error={error}
+            timeout={2000}
+            onDismiss={clearError}
+            intl={intl}
+          />
+        )}
       </div>
-      {errorMsg && (
-        <ErrorToast
-          errorMsg={intl.formatMessage({ id: errorMsg })}
-          timeout={2000}
-          onDismiss={clearErrorMsg}
-        />
-      )}
-    </div>
-  );
-};
+    );
+  }
+}
 
 AppLayout.propTypes = {
   // 通过connect传入
+  error: PropTypes.object.isRequired,
   isLogin: PropTypes.bool.isRequired,
-  errorMsg: PropTypes.string.isRequired,
   user: PropTypes.object.isRequired,
   notices: PropTypes.array.isRequired,
-  clearErrorMsg: PropTypes.func.isRequired,
+  clearError: PropTypes.func.isRequired,
   subscriptions: PropTypes.array.isRequired,
-  selectedView: PropTypes.object.isRequired,
   navigatorBarContent: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
   logout: PropTypes.func.isRequired,
   deleteNotice: PropTypes.func.isRequired,
   unsubscribe: PropTypes.func.isRequired,
-  selectView: PropTypes.func.isRequired,
   // 通过injectIntl传入
   intl: PropTypes.object.isRequired,
-  // 通过props传递
-  location: PropTypes.object.isRequired,
+  // 通过props传入
   history: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
+  error: getError(state),
   isLogin: getIsLogin(state),
-  errorMsg: getErrorMsg(state),
   user: getUser(state),
   notices: getNotices(state),
   subscriptions: getSubscriptions(state),
-  selectedView: getSelectedView(state),
   navigatorBarContent: getNavigatorBarContent(state),
+  location: state.router.location,
 });
 
 const mapDispatchToProps = {
-  clearErrorMsg,
+  clearError,
   logout,
   deleteNotice,
   unsubscribe,
-  selectView,
 };
 
 export default injectIntl(connect(

@@ -4,69 +4,55 @@ import {
   getAysncActionCreator,
 } from 'utils/createAsyncAction';
 import url from 'utils/url';
+import voteStrategies from 'constant/voteStrategies';
 import actionTypes from './actionTypes';
+import { getPageById } from './reducer';
 import { schema as newsListSchema } from '../entities/newsList';
 import { schema as categorySchema } from '../entities/category';
 
-// strategies[previous voted, state] => [current voted, incremental votes]
-const strategies = {
-  [-1]: {
-    1: [1, 2],
-    [-1]: [0, 1],
-  },
-  0: {
-    1: [1, 1],
-    [-1]: [-1, -1],
-  },
-  1: {
-    1: [0, -1],
-    [-1]: [-1, -2],
-  },
-};
-
-export const fetchNewsList = cid => (dispatch) => {
-  const createFetchNewsList = getAysncActionCreator(
+export const fetchCategoryNewsList = queries => (dispatch) => {
+  const createFetchCategoryNewsList = getAysncActionCreator(
     FETCH,
-    actionTypes.fetchNewsList,
+    actionTypes.fetchCategoryNewsList,
     newsListSchema,
   );
-  return dispatch(createFetchNewsList(url.fetchNewsList(cid)));
+  return dispatch(createFetchCategoryNewsList(url.fetchCategoryNewsList(), queries));
 };
 
-export const fetchFeedNewsList = feed => (dispatch) => {
+export const fetchFeedNewsList = queries => (dispatch) => {
   const createFetchFeedNewsList = getAysncActionCreator(
     FETCH,
     actionTypes.fetchFeedNewsList,
     newsListSchema,
   );
-  return dispatch(createFetchFeedNewsList(url.fetchFeedNewsList(feed)));
+  return dispatch(createFetchFeedNewsList(url.fetchFeedNewsList(), queries));
 };
 
-export const fetchVotedNewsList = v => (dispatch) => {
+export const fetchVotedNewsList = queries => (dispatch) => {
   const createFetchVotedNewsList = getAysncActionCreator(
     FETCH,
     actionTypes.fetchVotedNewsList,
     newsListSchema,
   );
-  return dispatch(createFetchVotedNewsList(url.fetchVotedNewsList(v)));
+  return dispatch(createFetchVotedNewsList(url.fetchVotedNewsList(), queries));
 };
 
-export const fetchSavedNewsList = () => (dispatch) => {
+export const fetchSavedNewsList = queries => (dispatch) => {
   const createFetchSavedNewsList = getAysncActionCreator(
     FETCH,
     actionTypes.fetchSavedNewsList,
     newsListSchema,
   );
-  return dispatch(createFetchSavedNewsList(url.fetchSavedNewsList()));
+  return dispatch(createFetchSavedNewsList(url.fetchSavedNewsList(), queries));
 };
 
-export const fetchHiddenNewsList = () => (dispatch) => {
+export const fetchHiddenNewsList = queries => (dispatch) => {
   const createFetchHiddenNewsList = getAysncActionCreator(
     FETCH,
     actionTypes.fetchHiddenNewsList,
     newsListSchema,
   );
-  return dispatch(createFetchHiddenNewsList(url.fetchHiddenNewsList()));
+  return dispatch(createFetchHiddenNewsList(url.fetchHiddenNewsList(), queries));
 };
 
 export const clearNewsList = () => ({
@@ -89,7 +75,7 @@ export const voteNews = (id, votes, voted, state) => (dispatch) => {
   );
   return dispatch(createVoteNews(url.voteNews(), { id, state }))
     .then(() => {
-      const [currentVoted, incrementalVotes] = strategies[voted][state];
+      const [currentVoted, incrementalVotes] = voteStrategies[voted][state];
       dispatch(changeNewsById(id, {
         voted: currentVoted,
         votes: votes + incrementalVotes,
@@ -115,7 +101,16 @@ export const hideNews = (id, hidden) => (dispatch) => {
     .then(() => dispatch(changeNewsById(id, { hidden })));
 };
 
-export const changeNewsById = (id, data) => ({
+export const changeNewsById = (id, data) => (dispatch, getState) => dispatch({
   type: actionTypes.changeNewsById,
-  payload: { id, data },
+  payload: {
+    id,
+    data,
+    page: getPageById(getState(), id),
+  },
+});
+
+export const changePage = page => ({
+  type: actionTypes.changePage,
+  payload: page,
 });

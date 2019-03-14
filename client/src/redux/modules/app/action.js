@@ -12,6 +12,7 @@ import { schema as noticesSchema } from '../entities/notices';
 import { schema as subscriptionsSchema } from '../entities/subscriptions';
 import { fetchCategory, clearNewsList } from '../newsPanel/action';
 import { clearSearchResults, changeSearchResultById } from '../searchPanel/action';
+import { getSearchResultById } from '../entities/searchResults';
 
 export const clearError = () => ({
   type: actionTypes.clearError,
@@ -128,7 +129,7 @@ export const clearSubscriptions = () => ({
   type: actionTypes.clearSubscriptions,
 });
 
-export const unsubscribe = id => (dispatch) => {
+export const unsubscribe = id => (dispatch, getState) => {
   const createUnsubscribe = getAysncActionCreator(
     DELETE,
     actionTypes.unsubscribe,
@@ -137,8 +138,10 @@ export const unsubscribe = id => (dispatch) => {
     .then(() => {
       dispatch(fetchCategory(id)); // 重新获取分类数据
       dispatch(clearSubscriptionById(id)); // 清除当前订阅
+      // 同步更新searchPanel里的搜索结果
       dispatch(changeSearchResultById(id, {
-        subscribed: false, // 同步更新searchPanel里的搜索结果
+        subscribed: false,
+        subscribers: getSearchResultById(getState(), id).subscribers - 1,
       }));
     });
 };

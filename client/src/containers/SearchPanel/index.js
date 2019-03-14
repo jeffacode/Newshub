@@ -52,15 +52,15 @@ class SearchPanel extends Component {
     return null;
   }
 
-  onSubscribeBtnClick = (cid, subscribers, subscribed) => {
+  onSubscribeBtnClick = (cid, subscribed) => {
     const {
       subscribe,
       unsubscribe,
     } = this.props;
     if (subscribed) {
-      unsubscribe(cid, subscribers);
+      unsubscribe(cid);
     } else {
-      subscribe(cid, subscribers);
+      subscribe(cid);
     }
   }
 

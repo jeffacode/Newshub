@@ -4,7 +4,12 @@ import actionTypes from './actionTypes';
 const initialState = {
   newsList: {
     isFetching: false,
-    ids: [],
+    page2Ids: {}, // { page: [ id... ], ... }
+    id2Page: {}, // { id: page, ... }
+    metadata: {
+      page: 1,
+      total: 0,
+    },
   },
   category: {
     isFetching: false,
@@ -13,7 +18,7 @@ const initialState = {
 
 const newsList = (state = initialState.newsList, action) => {
   switch (action.type) {
-    case actionTypes.fetchNewsList.requestType:
+    case actionTypes.fetchCategoryNewsList.requestType:
     case actionTypes.fetchFeedNewsList.requestType:
     case actionTypes.fetchVotedNewsList.requestType:
     case actionTypes.fetchSavedNewsList.requestType:
@@ -22,7 +27,7 @@ const newsList = (state = initialState.newsList, action) => {
         ...state,
         isFetching: true,
       };
-    case actionTypes.fetchNewsList.successType:
+    case actionTypes.fetchCategoryNewsList.successType:
     case actionTypes.fetchFeedNewsList.successType:
     case actionTypes.fetchVotedNewsList.successType:
     case actionTypes.fetchSavedNewsList.successType:
@@ -30,9 +35,20 @@ const newsList = (state = initialState.newsList, action) => {
       return {
         ...state,
         isFetching: false,
-        ids: state.ids.concat(action.data.ids),
+        page2Ids: {
+          ...state.page2Ids,
+          [action.data.metadata.page]: action.data.ids,
+        },
+        id2Page: {
+          ...state.id2Page,
+          ...action.data.ids.reduce((result, id) => ({
+            ...result,
+            [id]: action.data.metadata.page,
+          }), {}),
+        },
+        metadata: action.data.metadata,
       };
-    case actionTypes.fetchNewsList.failureType:
+    case actionTypes.fetchCategoryNewsList.failureType:
     case actionTypes.fetchFeedNewsList.failureType:
     case actionTypes.fetchVotedNewsList.failureType:
     case actionTypes.fetchSavedNewsList.failureType:
@@ -43,6 +59,14 @@ const newsList = (state = initialState.newsList, action) => {
       };
     case actionTypes.clearNewsList:
       return initialState.newsList;
+    case actionTypes.changePage:
+      return {
+        ...state,
+        metadata: {
+          ...state.metadata,
+          page: action.payload,
+        },
+      };
     default:
       return state;
   }
@@ -78,7 +102,17 @@ const reducer = combineReducers({
 export default reducer;
 
 // selectors
-export const getNewsList = state => state.newsPanel.newsList.ids.map(
-  id => state.entities.newsList[id],
-);
+export const getNewsListByPage = (state) => {
+  const { page2Ids, metadata: { page } } = state.newsPanel.newsList;
+  const { newsList } = state.entities;
+  if (page2Ids[page]) {
+    return page2Ids[page].map(id => newsList[page][id]);
+  }
+  return [];
+};
+export const getHistoryPages = state => Object.keys(state.newsPanel.newsList.page2Ids)
+  .map(id => parseInt(id, 10));
+export const getPageById = (state, id) => state.newsPanel.newsList.id2Page[id];
+export const getNewsListMetadata = state => state.newsPanel.newsList.metadata;
 export const getCategory = state => state.entities.category;
+export const getNewsListIsFetching = state => state.newsPanel.newsList.isFetching;

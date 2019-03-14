@@ -11,6 +11,16 @@ var NewsSchema = new mongoose.Schema({
     required: true,
     default: 0,
   },
+  upvotes: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  downvotes: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   source: {
     name: String,
   },
@@ -19,7 +29,11 @@ var NewsSchema = new mongoose.Schema({
   description: String,
   url: String,
   urlToImage: String,
-  publishedAt: String,
+  publishedAt: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
   content: String,
 });
 

@@ -58,11 +58,15 @@ class AppHeader extends Component {
   }
 
   hideNavigatorDropdown = (e) => {
-    // 当前点击区域不在navigator中
-    if (!this.navigator.current.contains(e.target)) {
-      this.setState({
-        showNavigatorDropdown: false,
-      });
+    const { showNavigatorDropdown } = this.state;
+    // 只有在导航栏显示时才进一步处理，避免没必要的重绘
+    if (showNavigatorDropdown) {
+      // 当前点击区域不在navigator中
+      if (!this.navigator.current.contains(e.target)) {
+        this.setState({
+          showNavigatorDropdown: false,
+        });
+      }
     }
   }
 
@@ -213,11 +217,14 @@ class AppHeader extends Component {
   }
 
   hideSearchHistory = (e) => {
-    // 当前点击区域不在search中
-    if (!this.search.current.contains(e.target)) {
-      this.setState({
-        showSearchHistory: false,
-      });
+    const { showSearchHistory } = this.state;
+    if (showSearchHistory) {
+      // 当前点击区域不在search中
+      if (!this.search.current.contains(e.target)) {
+        this.setState({
+          showSearchHistory: false,
+        });
+      }
     }
   }
 

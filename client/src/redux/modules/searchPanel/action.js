@@ -6,7 +6,7 @@ import {
 } from 'utils/createAsyncAction';
 import url from 'utils/url';
 import actionTypes from './actionTypes';
-import { schema as searchResultsSchema } from '../entities/searchResults';
+import { schema as searchResultsSchema, getSearchResultById } from '../entities/searchResults';
 import { fetchSubscriptions } from '../app/action';
 
 export const fetchSearchResults = searchQuery => (dispatch) => {
@@ -27,7 +27,7 @@ export const changeSearchResultById = (id, data) => ({
   payload: { id, data },
 });
 
-export const subscribe = (id, subscribers) => (dispatch) => {
+export const subscribe = id => (dispatch, getState) => {
   const createSubscribe = getAysncActionCreator(
     POST,
     actionTypes.subscribe,
@@ -36,13 +36,13 @@ export const subscribe = (id, subscribers) => (dispatch) => {
     .then(() => {
       dispatch(changeSearchResultById(id, {
         subscribed: true,
-        subscribers: subscribers + 1,
+        subscribers: getSearchResultById(getState(), id).subscribers + 1,
       }));
       dispatch(fetchSubscriptions()); // 同步更新AppHeader里的“我的订阅”
     });
 };
 
-export const unsubscribe = (id, subscribers) => (dispatch) => {
+export const unsubscribe = id => (dispatch, getState) => {
   const createUnsubscribe = getAysncActionCreator(
     DELETE,
     actionTypes.unsubscribe,
@@ -51,7 +51,7 @@ export const unsubscribe = (id, subscribers) => (dispatch) => {
     .then(() => {
       dispatch(changeSearchResultById(id, {
         subscribed: false,
-        subscribers: subscribers - 1,
+        subscribers: getSearchResultById(getState(), id).subscribers - 1,
       }));
       dispatch(fetchSubscriptions()); // 同步更新AppHeader里的“我的订阅”
     });

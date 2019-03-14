@@ -28,7 +28,7 @@ const SearchCategory = ({ categories, onSubscribeBtnClick, intl }) => (
           <div className="searchCategory__category__subscribeBtn">
             <Button
               type={subscribed ? 'primary' : 'default'}
-              onClick={() => onSubscribeBtnClick(id, subscribers, subscribed)}
+              onClick={() => onSubscribeBtnClick(id, subscribed)}
             >
               {intl.formatMessage({ id: subscribed ? 'subscribed' : 'subscribe' })}
             </Button>

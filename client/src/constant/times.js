@@ -1,26 +1,26 @@
 const times = [
   {
-    id: 1,
+    id: 'hour',
     name: 'sortSelector_timePastHour',
   },
   {
-    id: 2,
+    id: 'day',
     name: 'sortSelector_timePast24Hours',
   },
   {
-    id: 3,
+    id: 'week',
     name: 'sortSelector_timePastWeek',
   },
   {
-    id: 4,
+    id: 'month',
     name: 'sortSelector_timePastMonth',
   },
   {
-    id: 5,
+    id: 'year',
     name: 'sortSelector_timePastYear',
   },
   {
-    id: 6,
+    id: 'all',
     name: 'sortSelector_timeOfAllTime',
   },
 ];

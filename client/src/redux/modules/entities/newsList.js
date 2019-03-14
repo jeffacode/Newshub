@@ -5,23 +5,27 @@ export const schema = {
   id: 'id',
 };
 
+// { page: { id: data, ... }, ... }
 const initialState = {};
 
 const reducer = (state = initialState, action) => {
   if (action.data && action.data[schema.name]) {
     return {
       ...state,
-      ...action.data[schema.name],
+      [action.data.metadata.page]: action.data[schema.name],
     };
   }
 
   if (action.type === actionTypes.changeNewsById) {
-    const { id, data } = action.payload;
+    const { id, page, data } = action.payload;
     return {
       ...state,
-      [id]: {
-        ...state[id],
-        ...data,
+      [page]: {
+        ...state[page],
+        [id]: {
+          ...state[page][id],
+          ...data,
+        },
       },
     };
   }
@@ -34,6 +38,3 @@ const reducer = (state = initialState, action) => {
 };
 
 export default reducer;
-
-// selector
-export const getNewsById = (state, id) => state.entities.newsList[id];

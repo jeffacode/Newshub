@@ -14,6 +14,14 @@ var HiddenNews = require('../models/hiddenNews');
 var createNoticeEntity = require('../utils/createNoticeEntity');
 var news = require('./news');
 var categories = require('./categories');
+var {
+  getTimeStrategy,
+  getPopularityStrategy,
+  getSortStrategy,
+  voteStrategies,
+} = require('../utils/strategies');
+
+var pageSize = 10;
 
 router.post('/notices', authCheckMiddleware, function(req, res, next) {
   var uid = ObjectId(req.uid);
@@ -100,10 +108,10 @@ router.get('/subscriptions', authCheckMiddleware, function(req, res, next) {
       },
       {
         $lookup: {
-          from: "category",
-          localField: "cid",
-          foreignField: "_id",
-          as: "category"
+          from: 'category',
+          localField: 'cid',
+          foreignField: '_id',
+          as: 'category'
         }
       },
       {
@@ -112,8 +120,8 @@ router.get('/subscriptions', authCheckMiddleware, function(req, res, next) {
       {   
         $project: {
           _id: 0,
-          id: "$cid",
-          icon: "$category.icon",
+          id: '$cid',
+          icon: '$category.icon',
         },
       },
     ])
@@ -199,10 +207,10 @@ router.get('/search', authCheckMiddleware, function(req, res, next) {
     .aggregate([
       {
         $lookup: {
-          from: "subscription",
-          localField: "_id",
-          foreignField: "cid",
-          as: "subscriptions",
+          from: 'subscription',
+          localField: '_id',
+          foreignField: 'cid',
+          as: 'subscriptions',
         },
       },
       {
@@ -215,10 +223,10 @@ router.get('/search', authCheckMiddleware, function(req, res, next) {
                   {
                     $size: {
                       $filter: {
-                        input: "$subscriptions",
-                        as: "item",
+                        input: '$subscriptions',
+                        as: 'item',
                         cond: {
-                          $eq: ["$$item.uid", uid],
+                          $eq: ['$$item.uid', uid],
                         },
                       },
                     },
@@ -246,38 +254,42 @@ router.get('/search', authCheckMiddleware, function(req, res, next) {
     });
 });
 
-// fetchNewsList
-router.get('/news', authCheckMiddleware, function(req, res, next) {
+// fetchCategoryNewsList
+router.get('/categoryNews', authCheckMiddleware, function(req, res, next) {
   var uid = ObjectId(req.uid);
   var cid = req.query.cid;
+  var t = req.query.t;
+  var p = req.query.p;
+  var page = parseInt(req.query.page);
   News.aggregate([
     {
       $match: {
         cid: cid, // 从news中找到当前分类下的所有新闻
+        publishedAt: getTimeStrategy(t), // 只取对应时间后发布的新闻
       },
     },
     {
       $lookup: {
-        from: "votedNews",
-        localField: "_id",
-        foreignField: "nid",
-        as: "votedNews", // 从votedNews中找到每条新闻对应的voted数据
+        from: 'votedNews',
+        localField: '_id',
+        foreignField: 'nid',
+        as: 'votedNews', // 从votedNews中找到每条新闻对应的voted数据
       },
     },
     {
       $lookup: {
-        from: "savedNews",
-        localField: "_id",
-        foreignField: "nid",
-        as: "savedNews", // 从savedNews中找到每条新闻对应的saved数据
+        from: 'savedNews',
+        localField: '_id',
+        foreignField: 'nid',
+        as: 'savedNews', // 从savedNews中找到每条新闻对应的saved数据
       },
     },
     {
       $lookup: {
-        from: "hiddenNews",
-        localField: "_id",
-        foreignField: "nid",
-        as: "hiddenNews", // 从hiddenNews中找到每条新闻对应的hidden数据
+        from: 'hiddenNews',
+        localField: '_id',
+        foreignField: 'nid',
+        as: 'hiddenNews', // 从hiddenNews中找到每条新闻对应的hidden数据
       },
     },
     {
@@ -290,10 +302,10 @@ router.get('/news', authCheckMiddleware, function(req, res, next) {
                 {
                   $size: {
                     $filter: {
-                      input: "$votedNews",
-                      as: "item",
+                      input: '$votedNews',
+                      as: 'item',
                       cond: {
-                        $eq: ["$$item.uid", uid],
+                        $eq: ['$$item.uid', uid],
                       },
                     },
                   },
@@ -314,10 +326,10 @@ router.get('/news', authCheckMiddleware, function(req, res, next) {
                 {
                   $size: {
                     $filter: {
-                      input: "$savedNews",
-                      as: "item",
+                      input: '$savedNews',
+                      as: 'item',
                       cond: {
-                        $eq: ["$$item.uid", uid], // 过滤出当前用户的saved数据
+                        $eq: ['$$item.uid', uid], // 过滤出当前用户的saved数据
                       },
                     },
                   },
@@ -336,10 +348,10 @@ router.get('/news', authCheckMiddleware, function(req, res, next) {
                 {
                   $size: {
                     $filter: {
-                      input: "$hiddenNews",
-                      as: "item",
+                      input: '$hiddenNews',
+                      as: 'item',
                       cond: {
-                        $eq: ["$$item.uid", uid], // 过滤出当前用户的hidden数据
+                        $eq: ['$$item.uid', uid], // 过滤出当前用户的hidden数据
                       },
                     },
                   },
@@ -351,7 +363,11 @@ router.get('/news', authCheckMiddleware, function(req, res, next) {
             else: true,  // 如有就置为true
 					},
         },
+        popularity: getPopularityStrategy(p),
       },
+    },
+    {
+      $sort: getSortStrategy(p),
     },
     {
       $project: {
@@ -360,14 +376,30 @@ router.get('/news', authCheckMiddleware, function(req, res, next) {
         votedNews: 0,
         savedNews: 0,
         hiddenNews: 0,
+        upvotes: 0,
+        downvotes: 0,
+        popularity: 0,
+      },
+    },
+    {
+      $facet: {
+        metadata: [ { $count: "total" }, { $addFields: { page: parseInt(page) } } ],
+        data: [ { $skip: (page - 1) * pageSize }, { $limit: pageSize } ],
       },
     },
   ])
-  .exec(function(err, newsList) {
+  .exec(function(err, docs) {
     if (err) {
       return res.status(500).end();
     }
-    return res.json(newsList);
+    var data = docs[0];
+    return res.json({
+      ...data,
+      metadata: data.metadata[0] || {
+        page: 1,
+        total: 0,
+      },
+    });
   });
 });
 
@@ -375,6 +407,7 @@ router.get('/news', authCheckMiddleware, function(req, res, next) {
 router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
   var uid = ObjectId(req.uid);
   var feed = req.query.feed;
+  var page = parseInt(req.query.page);
   switch(feed) {
     case 'home':
       // 返回当前用户订阅的所有分类的新闻数据
@@ -386,10 +419,10 @@ router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
         },
         {
           $lookup: {
-            from: "news",
-            localField: "cid",
-            foreignField: "cid",
-            as: "news",
+            from: 'news',
+            localField: 'cid',
+            foreignField: 'cid',
+            as: 'news',
           },
         },
         {
@@ -402,26 +435,26 @@ router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
         },
         {
           $lookup: {
-            from: "votedNews",
-            localField: "_id",
-            foreignField: "nid",
-            as: "votedNews",
+            from: 'votedNews',
+            localField: '_id',
+            foreignField: 'nid',
+            as: 'votedNews',
           },
         },
         {
           $lookup: {
-            from: "savedNews",
-            localField: "_id",
-            foreignField: "nid",
-            as: "savedNews",
+            from: 'savedNews',
+            localField: '_id',
+            foreignField: 'nid',
+            as: 'savedNews',
           },
         },
         {
           $lookup: {
-            from: "hiddenNews",
-            localField: "_id",
-            foreignField: "nid",
-            as: "hiddenNews",
+            from: 'hiddenNews',
+            localField: '_id',
+            foreignField: 'nid',
+            as: 'hiddenNews',
           },
         },
         {
@@ -434,10 +467,10 @@ router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
                     {
                       $size: {
                         $filter: {
-                          input: "$votedNews",
-                          as: "item",
+                          input: '$votedNews',
+                          as: 'item',
                           cond: {
-                            $eq: ["$$item.uid", uid],
+                            $eq: ['$$item.uid', uid],
                           },
                         },
                       },
@@ -448,7 +481,7 @@ router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
                 then: 0,
                 else: {
                   $arrayElemAt: ['$votedNews.voted', 0],
-                }
+                },
               },
             },
             saved: {
@@ -458,10 +491,10 @@ router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
                     {
                       $size: {
                         $filter: {
-                          input: "$savedNews",
-                          as: "item",
+                          input: '$savedNews',
+                          as: 'item',
                           cond: {
-                            $eq: ["$$item.uid", uid],
+                            $eq: ['$$item.uid', uid],
                           },
                         },
                       },
@@ -480,10 +513,10 @@ router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
                     {
                       $size: {
                         $filter: {
-                          input: "$hiddenNews",
-                          as: "item",
+                          input: '$hiddenNews',
+                          as: 'item',
                           cond: {
-                            $eq: ["$$item.uid", uid],
+                            $eq: ['$$item.uid', uid],
                           },
                         },
                       },
@@ -506,12 +539,25 @@ router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
             hiddenNews: 0,
           },
         },
+        {
+          $facet: {
+            metadata: [ { $count: "total" }, { $addFields: { page: parseInt(page) } } ],
+            data: [ { $skip: (page - 1) * pageSize }, { $limit: pageSize } ],
+          },
+        },
       ])
-      .exec(function(err, newsList) {
+      .exec(function(err, docs) {
         if (err) {
           return res.status(500).end();
         }
-        return res.json(newsList);
+        var data = docs[0];
+        return res.json({
+          ...data,
+          metadata: data.metadata[0] || {
+            page: 1,
+            total: 0,
+          },
+        });
       });
       break;
     case 'popular':
@@ -531,26 +577,26 @@ router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
         },
         {
           $lookup: {
-            from: "votedNews",
-            localField: "_id",
-            foreignField: "nid",
-            as: "votedNews",
+            from: 'votedNews',
+            localField: '_id',
+            foreignField: 'nid',
+            as: 'votedNews',
           },
         },
         {
           $lookup: {
-            from: "savedNews",
-            localField: "_id",
-            foreignField: "nid",
-            as: "savedNews",
+            from: 'savedNews',
+            localField: '_id',
+            foreignField: 'nid',
+            as: 'savedNews',
           },
         },
         {
           $lookup: {
-            from: "hiddenNews",
-            localField: "_id",
-            foreignField: "nid",
-            as: "hiddenNews",
+            from: 'hiddenNews',
+            localField: '_id',
+            foreignField: 'nid',
+            as: 'hiddenNews',
           },
         },
         {
@@ -563,10 +609,10 @@ router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
                     {
                       $size: {
                         $filter: {
-                          input: "$votedNews",
-                          as: "item",
+                          input: '$votedNews',
+                          as: 'item',
                           cond: {
-                            $eq: ["$$item.uid", uid],
+                            $eq: ['$$item.uid', uid],
                           },
                         },
                       },
@@ -587,10 +633,10 @@ router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
                     {
                       $size: {
                         $filter: {
-                          input: "$savedNews",
-                          as: "item",
+                          input: '$savedNews',
+                          as: 'item',
                           cond: {
-                            $eq: ["$$item.uid", uid],
+                            $eq: ['$$item.uid', uid],
                           },
                         },
                       },
@@ -609,10 +655,10 @@ router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
                     {
                       $size: {
                         $filter: {
-                          input: "$hiddenNews",
-                          as: "item",
+                          input: '$hiddenNews',
+                          as: 'item',
                           cond: {
-                            $eq: ["$$item.uid", uid],
+                            $eq: ['$$item.uid', uid],
                           },
                         },
                       },
@@ -635,12 +681,25 @@ router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
             hiddenNews: 0,
           },
         },
+        {
+          $facet: {
+            metadata: [ { $count: "total" }, { $addFields: { page: parseInt(page) } } ],
+            data: [ { $skip: (page - 1) * pageSize }, { $limit: pageSize } ],
+          },
+        },
       ])
-      .exec(function(err, newsList) {
+      .exec(function(err, docs) {
         if (err) {
           return res.status(500).end();
         }
-        return res.json(newsList);
+        var data = docs[0];
+        return res.json({
+          ...data,
+          metadata: data.metadata[0] || {
+            page: 1,
+            total: 0,
+          },
+        });
       });
       break;
     case 'all':
@@ -648,26 +707,26 @@ router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
       News.aggregate([
         {
           $lookup: {
-            from: "votedNews",
-            localField: "_id",
-            foreignField: "nid",
-            as: "votedNews",
+            from: 'votedNews',
+            localField: '_id',
+            foreignField: 'nid',
+            as: 'votedNews',
           },
         },
         {
           $lookup: {
-            from: "savedNews",
-            localField: "_id",
-            foreignField: "nid",
-            as: "savedNews",
+            from: 'savedNews',
+            localField: '_id',
+            foreignField: 'nid',
+            as: 'savedNews',
           },
         },
         {
           $lookup: {
-            from: "hiddenNews",
-            localField: "_id",
-            foreignField: "nid",
-            as: "hiddenNews",
+            from: 'hiddenNews',
+            localField: '_id',
+            foreignField: 'nid',
+            as: 'hiddenNews',
           },
         },
         {
@@ -680,10 +739,10 @@ router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
                     {
                       $size: {
                         $filter: {
-                          input: "$votedNews",
-                          as: "item",
+                          input: '$votedNews',
+                          as: 'item',
                           cond: {
-                            $eq: ["$$item.uid", uid],
+                            $eq: ['$$item.uid', uid],
                           },
                         },
                       },
@@ -704,10 +763,10 @@ router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
                     {
                       $size: {
                         $filter: {
-                          input: "$savedNews",
-                          as: "item",
+                          input: '$savedNews',
+                          as: 'item',
                           cond: {
-                            $eq: ["$$item.uid", uid],
+                            $eq: ['$$item.uid', uid],
                           },
                         },
                       },
@@ -726,10 +785,10 @@ router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
                     {
                       $size: {
                         $filter: {
-                          input: "$hiddenNews",
-                          as: "item",
+                          input: '$hiddenNews',
+                          as: 'item',
                           cond: {
-                            $eq: ["$$item.uid", uid],
+                            $eq: ['$$item.uid', uid],
                           },
                         },
                       },
@@ -752,12 +811,25 @@ router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
             hiddenNews: 0,
           },
         },
+        {
+          $facet: {
+            metadata: [ { $count: "total" }, { $addFields: { page: parseInt(page) } } ],
+            data: [ { $skip: (page - 1) * pageSize }, { $limit: pageSize } ],
+          },
+        },
       ])
-      .exec(function(err, newsList) {
+      .exec(function(err, docs) {
         if (err) {
           return res.status(500).end();
         }
-        return res.json(newsList);
+        var data = docs[0];
+        return res.json({
+          ...data,
+          metadata: data.metadata[0] || {
+            page: 1,
+            total: 0,
+          },
+        });
       });
       break;
     default:
@@ -765,29 +837,13 @@ router.get('/feedNews', authCheckMiddleware, function(req, res, next) {
   }
 });
 
-// strategies[previous voted, state] => [current voted, incremental votes]
-var strategies = {
-  [-1]: {
-    1: [1, 2],
-    [-1]: [0, 1],
-  },
-  0: {
-    1: [1, 1],
-    [-1]: [-1, -1],
-  },
-  1: {
-    1: [0, -1],
-    [-1]: [-1, -2],
-  },
-};
-
 // voteNews
 router.post('/votedNews', authCheckMiddleware, function(req, res, next) {
   var uid,
       nid,
       state,
       newVotedNews,
-      strategy;
+      voteStrategy;
   if (req.body.id && req.body.state) {
     uid = ObjectId(req.uid);
     nid = ObjectId(req.body.id);
@@ -801,23 +857,25 @@ router.post('/votedNews', authCheckMiddleware, function(req, res, next) {
       }
       if (!votedNews) {
         // 获取更新策略
-        strategy = strategies[0][state];
+        voteStrategy = voteStrategies[0][state];
         // 创建新的votedNews
         newVotedNews = new VotedNews({
           uid: uid,
           nid: nid,
-          voted: strategy[0],
+          voted: voteStrategy[0],
         });
         newVotedNews.save(function(err) {
           if (err) {
             return res.status(500).end();
           }
-          // 更新当前news的votes字段
+          // 更新当前news的votes、upvotes、downvotes字段
           News.findById(nid, function(err, news) {
             if (err) {
               return res.status(500).end();
             }
-            news.votes += strategy[1];
+            news.votes += voteStrategy[1];
+            news.downvotes += voteStrategy[2];
+            news.upvotes += voteStrategy[3];
             news.save(function(err) {
               if (err) {
                  return res.status(500).end();
@@ -828,19 +886,21 @@ router.post('/votedNews', authCheckMiddleware, function(req, res, next) {
         });
       } else {
         // 获取更新策略
-        strategy = strategies[votedNews.voted][state];
-        if (strategy[0] === 0) {
+        voteStrategy = voteStrategies[votedNews.voted][state];
+        if (voteStrategy[0] === 0) {
           // 从表中删除当前记录
           VotedNews.findByIdAndRemove(votedNews._id, function(err) {
             if (err) {
               return res.status(500).end();
             }
-            // 更新当前news的votes字段
+            // 更新当前news的votes、upvotes、downvotes字段
             News.findById(nid, function(err, news) {
               if (err) {
                 return res.status(500).end();
               }
-              news.votes = news.votes + strategy[1];
+              news.votes += voteStrategy[1];
+              news.downvotes += voteStrategy[2];
+              news.upvotes += voteStrategy[3];
               news.save(function(err) {
                 if (err) {
                   return res.status(500).end();
@@ -852,17 +912,19 @@ router.post('/votedNews', authCheckMiddleware, function(req, res, next) {
         } else {
           // 更新当前votedNews的voted字段
           VotedNews.findByIdAndUpdate(votedNews._id, {
-            voted: strategy[0],
+            voted: voteStrategy[0],
           }, function(err) {
             if (err) {
               return res.status(500).end();
             }
-            // 更新当前news的votes字段
+            // 更新当前news的votes、upvotes、downvotes字段
             News.findById(nid, function(err, news) {
               if (err) {
                 return res.status(500).end();
               }
-              news.votes = news.votes + strategy[1];
+              news.votes += voteStrategy[1];
+              news.downvotes += voteStrategy[2];
+              news.upvotes += voteStrategy[3];
               news.save(function(err) {
                 if (err) {
                   return res.status(500).end();
@@ -961,6 +1023,7 @@ router.post('/hiddenNews', authCheckMiddleware, function(req, res, next) {
 router.get('/votedNews', authCheckMiddleware, function(req, res, next) {
   var uid = ObjectId(req.uid);
   var v = parseInt(req.query.v);
+  var page = parseInt(req.query.page);
   if (!_.isNaN(v)) {
     VotedNews.aggregate([
       {
@@ -971,26 +1034,26 @@ router.get('/votedNews', authCheckMiddleware, function(req, res, next) {
       },
       {
         $lookup: {
-          from: "news",
-          localField: "nid",
-          foreignField: "_id",
-          as: "news",
+          from: 'news',
+          localField: 'nid',
+          foreignField: '_id',
+          as: 'news',
         },
       },
       {
         $lookup: {
-          from: "savedNews",
-          localField: "nid",
-          foreignField: "nid",
-          as: "savedNews",
+          from: 'savedNews',
+          localField: 'nid',
+          foreignField: 'nid',
+          as: 'savedNews',
         },
       },
       {
         $lookup: {
-          from: "hiddenNews",
-          localField: "nid",
-          foreignField: "nid",
-          as: "hiddenNews",
+          from: 'hiddenNews',
+          localField: 'nid',
+          foreignField: 'nid',
+          as: 'hiddenNews',
         },
       },
       {
@@ -1020,10 +1083,10 @@ router.get('/votedNews', authCheckMiddleware, function(req, res, next) {
               {
                 $size: {
                   $filter: {
-                    input: "$savedNews",
-                    as: "item",
+                    input: '$savedNews',
+                    as: 'item',
                     cond: {
-                      $eq: ["$$item.uid", uid],
+                      $eq: ['$$item.uid', uid],
                     },
                   },
                 },
@@ -1036,10 +1099,10 @@ router.get('/votedNews', authCheckMiddleware, function(req, res, next) {
               {
                 $size: {
                   $filter: {
-                    input: "$hiddenNews",
-                    as: "item",
+                    input: '$hiddenNews',
+                    as: 'item',
                     cond: {
-                      $eq: ["$$item.uid", uid],
+                      $eq: ['$$item.uid', uid],
                     },
                   },
                 },
@@ -1049,12 +1112,25 @@ router.get('/votedNews', authCheckMiddleware, function(req, res, next) {
           },
         },
       },
+      {
+        $facet: {
+          metadata: [ { $count: "total" }, { $addFields: { page: parseInt(page) } } ],
+          data: [ { $skip: (page - 1) * pageSize }, { $limit: pageSize } ],
+        },
+      },
     ])
-    .exec(function(err, newsList) {
+    .exec(function(err, docs) {
       if (err) {
         return res.status(500).end();
       }
-      return res.json(newsList);
+      var data = docs[0];
+      return res.json({
+        ...data,
+        metadata: data.metadata[0] || {
+          page: 1,
+          total: 0,
+        },
+      });
     });
   } else {
     return res.status(400).end();
@@ -1064,6 +1140,7 @@ router.get('/votedNews', authCheckMiddleware, function(req, res, next) {
 // fetchSavedNews
 router.get('/savedNews', authCheckMiddleware, function(req, res, next) {
   var uid = ObjectId(req.uid);
+  var page = parseInt(req.query.page);
   SavedNews.aggregate([
     {
       $match: {
@@ -1072,26 +1149,26 @@ router.get('/savedNews', authCheckMiddleware, function(req, res, next) {
     },
     {
       $lookup: {
-        from: "news",
-        localField: "nid",
-        foreignField: "_id",
-        as: "news",
+        from: 'news',
+        localField: 'nid',
+        foreignField: '_id',
+        as: 'news',
       },
     },
     {
       $lookup: {
-        from: "votedNews",
-        localField: "nid",
-        foreignField: "nid",
-        as: "votedNews",
+        from: 'votedNews',
+        localField: 'nid',
+        foreignField: 'nid',
+        as: 'votedNews',
       },
     },
     {
       $lookup: {
-        from: "hiddenNews",
-        localField: "nid",
-        foreignField: "nid",
-        as: "hiddenNews",
+        from: 'hiddenNews',
+        localField: 'nid',
+        foreignField: 'nid',
+        as: 'hiddenNews',
       },
     },
     {
@@ -1123,10 +1200,10 @@ router.get('/savedNews', authCheckMiddleware, function(req, res, next) {
                 {
                   $size: {
                     $filter: {
-                      input: "$votedNews",
-                      as: "item",
+                      input: '$votedNews',
+                      as: 'item',
                       cond: {
-                        $eq: ["$$item.uid", uid],
+                        $eq: ['$$item.uid', uid],
                       },
                     },
                   },
@@ -1146,10 +1223,10 @@ router.get('/savedNews', authCheckMiddleware, function(req, res, next) {
             {
               $size: {
                 $filter: {
-                  input: "$hiddenNews",
-                  as: "item",
+                  input: '$hiddenNews',
+                  as: 'item',
                   cond: {
-                    $eq: ["$$item.uid", uid],
+                    $eq: ['$$item.uid', uid],
                   },
                 },
               },
@@ -1159,18 +1236,32 @@ router.get('/savedNews', authCheckMiddleware, function(req, res, next) {
         },
       },
     },
+    {
+      $facet: {
+        metadata: [ { $count: "total" }, { $addFields: { page: parseInt(page) } } ],
+        data: [ { $skip: (page - 1) * pageSize }, { $limit: pageSize } ],
+      },
+    },
   ])
-  .exec(function(err, newsList) {
+  .exec(function(err, docs) {
     if (err) {
       return res.status(500).end();
     }
-    return res.json(newsList);
+    var data = docs[0];
+    return res.json({
+      ...data,
+      metadata: data.metadata[0] || {
+        page: 1,
+        total: 0,
+      },
+    });
   });
 });
 
 // fetchHiddenNews
 router.get('/hiddenNews', authCheckMiddleware, function(req, res, next) {
   var uid = ObjectId(req.uid);
+  var page = parseInt(req.query.page);
   HiddenNews.aggregate([
     {
       $match: {
@@ -1179,26 +1270,26 @@ router.get('/hiddenNews', authCheckMiddleware, function(req, res, next) {
     },
     {
       $lookup: {
-        from: "news",
-        localField: "nid",
-        foreignField: "_id",
-        as: "news",
+        from: 'news',
+        localField: 'nid',
+        foreignField: '_id',
+        as: 'news',
       },
     },
     {
       $lookup: {
-        from: "votedNews",
-        localField: "nid",
-        foreignField: "nid",
-        as: "votedNews",
+        from: 'votedNews',
+        localField: 'nid',
+        foreignField: 'nid',
+        as: 'votedNews',
       },
     },
     {
       $lookup: {
-        from: "savedNews",
-        localField: "nid",
-        foreignField: "nid",
-        as: "savedNews",
+        from: 'savedNews',
+        localField: 'nid',
+        foreignField: 'nid',
+        as: 'savedNews',
       },
     },
     {
@@ -1230,10 +1321,10 @@ router.get('/hiddenNews', authCheckMiddleware, function(req, res, next) {
                 {
                   $size: {
                     $filter: {
-                      input: "$votedNews",
-                      as: "item",
+                      input: '$votedNews',
+                      as: 'item',
                       cond: {
-                        $eq: ["$$item.uid", uid],
+                        $eq: ['$$item.uid', uid],
                       },
                     },
                   },
@@ -1252,10 +1343,10 @@ router.get('/hiddenNews', authCheckMiddleware, function(req, res, next) {
             {
               $size: {
                 $filter: {
-                  input: "$savedNews",
-                  as: "item",
+                  input: '$savedNews',
+                  as: 'item',
                   cond: {
-                    $eq: ["$$item.uid", uid],
+                    $eq: ['$$item.uid', uid],
                   },
                 },
               },
@@ -1266,12 +1357,25 @@ router.get('/hiddenNews', authCheckMiddleware, function(req, res, next) {
         hidden: 1,
       },
     },
+  {
+      $facet: {
+        metadata: [ { $count: "total" }, { $addFields: { page: parseInt(page) } } ],
+        data: [ { $skip: (page - 1) * pageSize }, { $limit: pageSize } ],
+      },
+    },
   ])
-  .exec(function(err, newsList) {
+  .exec(function(err, docs) {
     if (err) {
       return res.status(500).end();
     }
-    return res.json(newsList);
+    var data = docs[0];
+    return res.json({
+      ...data,
+      metadata: data.metadata[0] || {
+        page: 1,
+        total: 0,
+      },
+    });
   });
 });
 

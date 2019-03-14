@@ -3,13 +3,23 @@ import reduce from 'lodash/reduce';
 
 /**
  * 格式化数据
- * @param {Array} data 原始数据
+ * @param {Array} response 原始数据
  * @param {Object} schema 领域实体的schema
  */
-const formatData = (data, schema) => {
+const formatData = (response, schema) => {
   const { id, name } = schema;
+  const { metadata } = response;
+  let { data } = response;
+
+  if (!metadata) {
+    // metadata数据不存在，response直接赋值给data
+    data = response;
+  }
+
+  let formattedData;
+
   if (isArray(data)) {
-    return reduce(
+    formattedData = reduce(
       data,
       (result, item) => {
         result[name][item[id]] = item;
@@ -21,10 +31,19 @@ const formatData = (data, schema) => {
         ids: [],
       },
     );
+  } else {
+    formattedData = {
+      [name]: data,
+    };
   }
-  return {
-    [name]: data,
-  };
+
+  if (metadata) {
+    return {
+      ...formattedData,
+      metadata,
+    };
+  }
+  return formattedData;
 };
 
 export default formatData;

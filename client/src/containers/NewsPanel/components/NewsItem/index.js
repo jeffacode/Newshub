@@ -10,8 +10,13 @@ import {
   Tag,
   Tooltip,
   Modal,
+  Select,
+  Input,
 } from 'antd';
 import './style.scss';
+
+const { Option } = Select;
+const { TextArea } = Input;
 
 const formatPublishedTime = (publishedTime) => {
   if (!publishedTime) {
@@ -97,6 +102,10 @@ class NewsItem extends Component {
     });
   }
 
+  onReportCategorySelected = (val) => {
+    console.log(val);
+  }
+
   renderShareNewsModal = () => {
     const { isShareModalVisible } = this.state;
     const { news: { title }, intl } = this.props;
@@ -141,16 +150,46 @@ class NewsItem extends Component {
     const { intl } = this.props;
     return (
       <Modal
-        title={intl.formatMessage({ id: 'modal_share_title' })}
+        title={intl.formatMessage({ id: 'modal_report_title' })}
         visible={isReportModalVisible}
-        okText={intl.formatMessage({ id: 'modal_share_ok' })}
+        okText={intl.formatMessage({ id: 'modal_report_ok' })}
         cancelText={intl.formatMessage({ id: 'modal_cancel' })}
         onOk={this.onReportNewsOk}
         onCancel={this.onReportNewsCancel}
       >
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+        <div className="newsItem__reportModal__notice mb-10">
+          {intl.formatMessage({ id: 'modal_report_notice' })}
+        </div>
+        <div className="newsItem__reportModal__select mb-10">
+          <Select
+            defaultValue={intl.formatMessage({ id: 'modal_reportOption_default' })}
+            style={{ width: '100%' }}
+            onSelect={this.onReportCategorySelected}
+          >
+            <Option value="spam">
+              <Icon type="warning" className="mr-10" />
+              {intl.formatMessage({ id: 'modal_reportOption_spam' })}
+            </Option>
+            <Option value="abuse">
+              <Icon type="frown" className="mr-10" />
+              {intl.formatMessage({ id: 'modal_reportOption_abuse' })}
+            </Option>
+            <Option value="copyright">
+              <Icon type="exception" className="mr-10" />
+              {intl.formatMessage({ id: 'modal_reportOption_copyright' })}
+            </Option>
+            <Option value="others">
+              <Icon type="question-circle" className="mr-10" />
+              {intl.formatMessage({ id: 'modal_reportOption_others' })}
+            </Option>
+          </Select>
+        </div>
+        <div className="newsItem__reportModal__input">
+          <TextArea
+            defaultValue={intl.formatMessage({ id: 'modal_reportText_default' })}
+            style={{ height: 100 }}
+          />
+        </div>
       </Modal>
     );
   }

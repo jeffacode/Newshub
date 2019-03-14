@@ -34,3 +34,6 @@ const reducer = (state = initialState, action) => {
 };
 
 export default reducer;
+
+// selector
+export const getSearchResultById = (state, id) => state.entities.searchResults[id];

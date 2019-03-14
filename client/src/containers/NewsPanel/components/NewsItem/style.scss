@@ -132,8 +132,11 @@
 }
 
 .newsItem.card {
-  margin-bottom: 10px;
   border-radius: $border-radius-base;
+
+  &~& {
+    margin-top: 10px;
+  }
 
   .newsItem__img {
     img {

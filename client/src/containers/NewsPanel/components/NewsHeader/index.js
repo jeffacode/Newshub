@@ -112,22 +112,22 @@ class NewsHeader extends Component {
 
   renderSort = () => {
     const {
-      selectedPopularity,
       selectedTime,
-      selectPopularity,
+      selectedPopularity,
       selectTime,
+      selectPopularity,
     } = this.props;
     return this.renderHeaderGroup(
       'sort',
       this.renderSortSelector(
-        popularities,
-        selectedPopularity,
-        selectPopularity,
-      ),
-      this.renderSortSelector(
         times,
         selectedTime,
         selectTime,
+      ),
+      this.renderSortSelector(
+        popularities,
+        selectedPopularity,
+        selectPopularity,
       ),
     );
   }
@@ -139,7 +139,7 @@ class NewsHeader extends Component {
         {
           cid && (
             <div className="newsHeader__content">
-              <Icon type={icon} className="newsHeader__icon" />
+              <Icon type={icon || 'robot'} className="newsHeader__icon" />
               <div className="newsHeader__title">{id}</div>
               <div className="newsHeader__subscribers">
                 {`${formatNumber(subscribers)} `}
@@ -161,8 +161,8 @@ NewsHeader.propTypes = {
   cid: PropTypes.string,
   category: PropTypes.object.isRequired,
   selectedView: PropTypes.object.isRequired,
-  selectedPopularity: PropTypes.object.isRequired,
   selectedTime: PropTypes.object.isRequired,
+  selectedPopularity: PropTypes.object.isRequired,
   selectView: PropTypes.func.isRequired,
   selectPopularity: PropTypes.func.isRequired,
   selectTime: PropTypes.func.isRequired,

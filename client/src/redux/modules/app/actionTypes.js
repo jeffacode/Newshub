@@ -15,7 +15,7 @@ const actionTypes = {
   clearNotices: `${MODULE}/CLEAR_NOTICES`, // 清除通知
   fetchSubscriptions: createAsyncActionTypes(MODULE, 'FETCH_SUBSCRIPTIONS'), // 获取订阅
   clearSubscriptions: `${MODULE}/CLEAR_SUBSCRIPTIONS`, // 清除全部订阅数据
-  clearSubscriptionByCid: `${MODULE}/CLEAR_SUBSCRIPTION_BY_CID`, // 清除某订阅数据
+  clearSubscriptionByTid: `${MODULE}/CLEAR_SUBSCRIPTION_BY_TID`, // 清除某订阅数据
   unsubscribe: createAsyncActionTypes(MODULE, 'UNSUBSCRIBE'), // 取消订阅
   setNavigatorBar: `${MODULE}/SET_NAVIGATOR_BAR`, // 设置导航栏
 };

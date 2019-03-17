@@ -10,9 +10,9 @@ import SearchHistory from 'utils/SearchHistory';
 import actionTypes from './actionTypes';
 import { schema as noticesSchema } from '../entities/notices';
 import { schema as subscriptionsSchema } from '../entities/subscriptions';
-import { fetchCategory, clearNewsList } from '../newsPanel/action';
-import { clearSearchResults, changeSearchResultByCid } from '../searchPanel/action';
-import { getSearchResultByCid } from '../entities/searchResults';
+import { fetchTopic, clearNewsList } from '../newsPanel/action';
+import { clearSearchResults, changeSearchResultByTid } from '../searchPanel/action';
+import { getSearchResultByTid } from '../entities/searchResults';
 
 export const clearError = () => ({
   type: actionTypes.clearError,
@@ -120,28 +120,28 @@ export const fetchSubscriptions = () => (dispatch) => {
   return dispatch(createFetchSubscriptions(url.fetchSubscriptions()));
 };
 
-export const clearSubscriptionByCid = cid => ({
-  type: actionTypes.clearSubscriptionByCid,
-  payload: cid,
+export const clearSubscriptionByTid = tid => ({
+  type: actionTypes.clearSubscriptionByTid,
+  payload: tid,
 });
 
 export const clearSubscriptions = () => ({
   type: actionTypes.clearSubscriptions,
 });
 
-export const unsubscribe = cid => (dispatch, getState) => {
+export const unsubscribe = tid => (dispatch, getState) => {
   const createUnsubscribe = getAysncActionCreator(
     DELETE,
     actionTypes.unsubscribe,
   );
-  return dispatch(createUnsubscribe(url.unsubscribe(cid)))
+  return dispatch(createUnsubscribe(url.unsubscribe(tid)))
     .then(() => {
-      dispatch(fetchCategory(cid)); // 重新获取分类数据
-      dispatch(clearSubscriptionByCid(cid)); // 清除当前订阅
+      dispatch(fetchTopic(tid)); // 重新获取分类数据
+      dispatch(clearSubscriptionByTid(tid)); // 清除当前订阅
       // 同步更新searchPanel里的搜索结果
-      dispatch(changeSearchResultByCid(cid, {
+      dispatch(changeSearchResultByTid(tid, {
         subscribed: false,
-        subscribers: getSearchResultByCid(getState(), cid).subscribers - 1,
+        subscribers: getSearchResultByTid(getState(), tid).subscribers - 1,
       }));
     });
 };

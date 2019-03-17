@@ -133,11 +133,11 @@ class NewsHeader extends Component {
   }
 
   render() {
-    const { cid, category: { id, icon, subscribers }, intl } = this.props;
+    const { tid, topic: { id, icon, subscribers }, intl } = this.props;
     return (
       <div className="newsHeader">
         {
-          cid && (
+          tid && (
             <div className="newsHeader__content">
               <Icon type={icon || 'robot'} className="newsHeader__icon" />
               <div className="newsHeader__title">{id}</div>
@@ -158,8 +158,8 @@ class NewsHeader extends Component {
 }
 
 NewsHeader.propTypes = {
-  cid: PropTypes.string,
-  category: PropTypes.object.isRequired,
+  tid: PropTypes.string,
+  topic: PropTypes.object.isRequired,
   selectedView: PropTypes.object.isRequired,
   selectedTime: PropTypes.object.isRequired,
   selectedPopularity: PropTypes.object.isRequired,
@@ -170,7 +170,7 @@ NewsHeader.propTypes = {
 };
 
 NewsHeader.defaultProps = {
-  cid: '',
+  tid: '',
 };
 
 export default NewsHeader;

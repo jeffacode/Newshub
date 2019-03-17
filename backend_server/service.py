@@ -28,28 +28,28 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
         return operations.deleteNotice(id)
     
     @pyjsonrpc.rpcmethod
-    def fetchCategory(self, category_id):
-        return operations.fetchCategory(category_id)
+    def fetchTopic(self, topic_id):
+        return operations.fetchTopic(topic_id)
     
     @pyjsonrpc.rpcmethod
     def fetchSubscriptions(self, user_id):
         return operations.fetchSubscriptions(user_id)
     
     @pyjsonrpc.rpcmethod
-    def subscribe(self, user_id, category_id):
-        return operations.subscribe(user_id, category_id)
+    def subscribe(self, user_id, topic_id):
+        return operations.subscribe(user_id, topic_id)
     
     @pyjsonrpc.rpcmethod
-    def unsubscribe(self, user_id, category_id):
-        return operations.unsubscribe(user_id, category_id)
+    def unsubscribe(self, user_id, topic_id):
+        return operations.unsubscribe(user_id, topic_id)
 
     @pyjsonrpc.rpcmethod
     def fetchSearchResults(self, user_id):
         return operations.fetchSearchResults(user_id)
 
     @pyjsonrpc.rpcmethod
-    def fetchCategoryNewsList(self, user_id, category_id, page, time, popularity):
-        return operations.fetchCategoryNewsList(user_id, category_id, page, time, popularity)
+    def fetchTopicNewsList(self, user_id, topic_id, page, time, popularity):
+        return operations.fetchTopicNewsList(user_id, topic_id, page, time, popularity)
     
     @pyjsonrpc.rpcmethod
     def fetchFeedNewsList(self, user_id, feed, page, time, popularity):

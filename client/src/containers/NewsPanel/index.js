@@ -4,13 +4,13 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'components/IntlContext';
 import map from 'lodash/map';
 import {
-  fetchCategoryNewsList,
+  fetchTopicNewsList,
   fetchFeedNewsList,
   fetchVotedNewsList,
   fetchSavedNewsList,
   fetchHiddenNewsList,
   clearNewsList,
-  fetchCategory,
+  fetchTopic,
   voteNews,
   saveNews,
   hideNews,
@@ -24,7 +24,7 @@ import {
   getNewsListByPage,
   getHistoryPages,
   getNewsListMetadata,
-  getCategory,
+  getTopic,
   getNewsListIsFetching,
 } from 'redux/modules/newsPanel/reducer';
 import views from 'constant/views';
@@ -42,11 +42,11 @@ class NewsPanel extends Component {
   constructor(props) {
     super(props);
     const {
-      match: { params: { cid, profile } },
+      match: { params: { tid, profile } },
     } = props;
     this.myRef = React.createRef();
     this.state = {
-      cid,
+      tid,
       profile,
       selectedView: views[0],
       selectedTime: times[2],
@@ -60,37 +60,37 @@ class NewsPanel extends Component {
       selectedPopularity,
     } = this.state;
     const {
-      fetchCategory,
+      fetchTopic,
       setNavigatorBar,
-      fetchCategoryNewsList,
+      fetchTopicNewsList,
       fetchFeedNewsList,
       fetchVotedNewsList,
       fetchSavedNewsList,
       fetchHiddenNewsList,
       clearNewsList,
       history,
-      match: { params: { cid, username, profile } },
+      match: { params: { tid, username, profile } },
       location: { pathname, hash },
     } = this.props;
 
     clearNewsList(); // 清除新闻数据
 
     // 如果在新闻分类页
-    if (cid) {
+    if (tid) {
       // 获取当前分类数据
-      fetchCategory(cid)
-        .then(({ data: { category } }) => {
-          if (category) {
-            const { icon } = category;
-            setNavigatorBar(icon, `c/${cid}`); // 设置导航栏内容
+      fetchTopic(tid)
+        .then(({ data: { topic } }) => {
+          if (topic) {
+            const { icon } = topic;
+            setNavigatorBar(icon, `c/${tid}`); // 设置导航栏内容
           } else {
             // 如果此分类不存在就跳到404
             history.push('/404');
           }
         });
       // 获取当前分类下的所有新闻数据
-      fetchCategoryNewsList({
-        cid,
+      fetchTopicNewsList({
+        tid,
         t: selectedTime.id,
         p: selectedPopularity.id,
         page: hash ? getPageFromHash(hash) : 1,
@@ -165,32 +165,32 @@ class NewsPanel extends Component {
       selectedPopularity,
     } = prevState;
     const {
-      fetchCategory,
-      fetchCategoryNewsList,
+      fetchTopic,
+      fetchTopicNewsList,
       fetchVotedNewsList,
       fetchSavedNewsList,
       fetchHiddenNewsList,
       setNavigatorBar,
       clearNewsList,
-      match: { params: { cid, profile } },
+      match: { params: { tid, profile } },
       location: { hash },
     } = nextProps;
 
     // 如果在新闻分类页
-    if (cid !== prevState.cid) {
+    if (tid !== prevState.tid) {
       clearNewsList(); // 必须先清除新闻数据
-      fetchCategory(cid)
-        .then(({ data: { category } }) => {
-          const { icon } = category;
-          setNavigatorBar(icon, `c/${cid}`);
+      fetchTopic(tid)
+        .then(({ data: { topic } }) => {
+          const { icon } = topic;
+          setNavigatorBar(icon, `c/${tid}`);
         });
-      fetchCategoryNewsList({
-        cid,
+      fetchTopicNewsList({
+        tid,
         t: selectedTime.id,
         p: selectedPopularity.id,
         page: hash ? getPageFromHash(hash) : 1,
       });
-      return { cid };
+      return { tid };
     }
 
     // 如果在用户档案页
@@ -236,19 +236,19 @@ class NewsPanel extends Component {
   selectTime = (time) => {
     const { selectedPopularity } = this.state;
     const {
-      fetchCategoryNewsList,
+      fetchTopicNewsList,
       clearNewsList,
-      match: { params: { cid } },
+      match: { params: { tid } },
       location: { hash },
     } = this.props;
     this.setState({
       selectedTime: time,
     }, () => {
       // 如果在新闻分类页
-      if (cid) {
+      if (tid) {
         clearNewsList(); // 必须先清除新闻数据
-        fetchCategoryNewsList({
-          cid,
+        fetchTopicNewsList({
+          tid,
           t: time.id,
           p: selectedPopularity.id,
           page: hash ? getPageFromHash(hash) : 1,
@@ -260,18 +260,18 @@ class NewsPanel extends Component {
   selectPopularity = (popularity) => {
     const { selectedTime } = this.state;
     const {
-      fetchCategoryNewsList,
+      fetchTopicNewsList,
       clearNewsList,
-      match: { params: { cid } },
+      match: { params: { tid } },
       location: { hash },
     } = this.props;
     this.setState({
       selectedPopularity: popularity,
     }, () => {
-      if (cid) {
+      if (tid) {
         clearNewsList();
-        fetchCategoryNewsList({
-          cid,
+        fetchTopicNewsList({
+          tid,
           t: selectedTime.id,
           p: popularity.id,
           page: hash ? getPageFromHash(hash) : 1,
@@ -287,14 +287,14 @@ class NewsPanel extends Component {
     } = this.state;
     const {
       historyPages,
-      fetchCategoryNewsList,
+      fetchTopicNewsList,
       fetchFeedNewsList,
       fetchVotedNewsList,
       fetchSavedNewsList,
       fetchHiddenNewsList,
       changePage,
       history,
-      match: { params: { cid, profile } },
+      match: { params: { tid, profile } },
       location: { pathname },
     } = this.props;
     // 页面滚动到最上方
@@ -309,9 +309,9 @@ class NewsPanel extends Component {
     // 当前页不存在才获取增量数据
     if (historyPages.indexOf(currentPage) === -1) {
       // 如果在新闻分类页
-      if (cid) {
-        fetchCategoryNewsList({
-          cid,
+      if (tid) {
+        fetchTopicNewsList({
+          tid,
           t: selectedTime.id,
           p: selectedPopularity.id,
           page: currentPage,
@@ -378,7 +378,7 @@ class NewsPanel extends Component {
   render() {
     const {
       isFetching,
-      category,
+      topic,
       newsListByPage,
       newsListMetadata: { page, total },
       voteNews,
@@ -387,7 +387,7 @@ class NewsPanel extends Component {
       sendClickLog,
       intl,
       history,
-      match: { params: { cid } },
+      match: { params: { tid } },
       location: { pathname },
     } = this.props;
     const {
@@ -401,8 +401,8 @@ class NewsPanel extends Component {
     return (
       <div className="newsPanel" ref={this.myRef}>
         <NewsHeader
-          cid={cid}
-          category={category}
+          tid={tid}
+          topic={topic}
           selectedView={selectedView}
           selectedTime={selectedTime}
           selectedPopularity={selectedPopularity}
@@ -415,7 +415,7 @@ class NewsPanel extends Component {
           const { id, hidden } = news;
 
           // 在新闻分类页且已隐藏时不显示
-          if (cid && hidden) {
+          if (tid && hidden) {
             return null;
           }
 
@@ -455,13 +455,13 @@ class NewsPanel extends Component {
 
 NewsPanel.propTypes = {
   isFetching: PropTypes.bool.isRequired,
-  category: PropTypes.object.isRequired,
+  topic: PropTypes.object.isRequired,
   newsListByPage: PropTypes.array.isRequired,
   historyPages: PropTypes.array.isRequired,
   newsListMetadata: PropTypes.object.isRequired,
-  fetchCategory: PropTypes.func.isRequired,
+  fetchTopic: PropTypes.func.isRequired,
   setNavigatorBar: PropTypes.func.isRequired,
-  fetchCategoryNewsList: PropTypes.func.isRequired,
+  fetchTopicNewsList: PropTypes.func.isRequired,
   fetchFeedNewsList: PropTypes.func.isRequired,
   fetchVotedNewsList: PropTypes.func.isRequired,
   fetchSavedNewsList: PropTypes.func.isRequired,
@@ -480,16 +480,16 @@ NewsPanel.propTypes = {
 
 const mapStateToProps = state => ({
   isFetching: getNewsListIsFetching(state),
-  category: getCategory(state),
+  topic: getTopic(state),
   newsListByPage: getNewsListByPage(state),
   historyPages: getHistoryPages(state),
   newsListMetadata: getNewsListMetadata(state),
 });
 
 const mapDispatchToProps = {
-  fetchCategory,
+  fetchTopic,
   setNavigatorBar,
-  fetchCategoryNewsList,
+  fetchTopicNewsList,
   fetchFeedNewsList,
   fetchVotedNewsList,
   fetchSavedNewsList,

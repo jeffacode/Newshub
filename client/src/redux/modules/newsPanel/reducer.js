@@ -11,14 +11,14 @@ const initialState = {
       total: 0,
     },
   },
-  category: {
+  topic: {
     isFetching: false,
   },
 };
 
 const newsList = (state = initialState.newsList, action) => {
   switch (action.type) {
-    case actionTypes.fetchCategoryNewsList.requestType:
+    case actionTypes.fetchTopicNewsList.requestType:
     case actionTypes.fetchFeedNewsList.requestType:
     case actionTypes.fetchVotedNewsList.requestType:
     case actionTypes.fetchSavedNewsList.requestType:
@@ -27,7 +27,7 @@ const newsList = (state = initialState.newsList, action) => {
         ...state,
         isFetching: true,
       };
-    case actionTypes.fetchCategoryNewsList.successType:
+    case actionTypes.fetchTopicNewsList.successType:
     case actionTypes.fetchFeedNewsList.successType:
     case actionTypes.fetchVotedNewsList.successType:
     case actionTypes.fetchSavedNewsList.successType:
@@ -48,7 +48,7 @@ const newsList = (state = initialState.newsList, action) => {
         },
         metadata: action.data.metadata,
       };
-    case actionTypes.fetchCategoryNewsList.failureType:
+    case actionTypes.fetchTopicNewsList.failureType:
     case actionTypes.fetchFeedNewsList.failureType:
     case actionTypes.fetchVotedNewsList.failureType:
     case actionTypes.fetchSavedNewsList.failureType:
@@ -72,19 +72,19 @@ const newsList = (state = initialState.newsList, action) => {
   }
 };
 
-const category = (state = initialState.category, action) => {
+const topic = (state = initialState.topic, action) => {
   switch (action.type) {
-    case actionTypes.fetchCategory.requestType:
+    case actionTypes.fetchTopic.requestType:
       return {
         ...state,
         isFetching: true,
       };
-    case actionTypes.fetchCategory.successType:
+    case actionTypes.fetchTopic.successType:
       return {
         ...state,
         isFetching: false,
       };
-    case actionTypes.fetchCategory.failureType:
+    case actionTypes.fetchTopic.failureType:
       return {
         ...state,
         isFetching: false,
@@ -96,7 +96,7 @@ const category = (state = initialState.category, action) => {
 
 const reducer = combineReducers({
   newsList,
-  category,
+  topic,
 });
 
 export default reducer;
@@ -114,5 +114,5 @@ export const getHistoryPages = state => Object.keys(state.newsPanel.newsList.pag
   .map(id => parseInt(id, 10));
 export const getPageById = (state, id) => state.newsPanel.newsList.id2Page[id];
 export const getNewsListMetadata = state => state.newsPanel.newsList.metadata;
-export const getCategory = state => state.entities.category;
+export const getTopic = state => state.entities.topic;
 export const getNewsListIsFetching = state => state.newsPanel.newsList.isFetching;

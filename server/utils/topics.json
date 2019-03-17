@@ -1,0 +1,52 @@
+[
+  {
+      "icon": "read",
+      "subscribers": 0,
+      "topic_id": "Education"
+  },
+  {
+      "icon": "environment",
+      "subscribers": 0,
+      "topic_id": "Environment"
+  },
+  {
+      "icon": "customer-service",
+      "subscribers": 0,
+      "topic_id": "Entertainment"
+  },
+  {
+      "icon": "bank",
+      "subscribers": 0,
+      "topic_id": "Politics"
+  },
+  {
+      "icon": "hourglass",
+      "subscribers": 0,
+      "topic_id": "Sports"
+  },
+  {
+      "icon": "mobile",
+      "subscribers": 0,
+      "topic_id": "Technology"
+  },
+  {
+      "icon": "thunderbolt",
+      "subscribers": 0,
+      "topic_id": "Weather"
+  },
+  {
+      "icon": "dollar",
+      "subscribers": 0,
+      "topic_id": "Economic"
+  },
+  {
+      "icon": "medicine-box",
+      "subscribers": 0,
+      "topic_id": "Health"
+  },
+  {
+      "icon": "alert",
+      "subscribers": 0,
+      "topic_id": "Crime"
+  }
+]

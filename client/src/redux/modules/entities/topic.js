@@ -1,6 +1,6 @@
 export const schema = {
-  name: 'category',
-  id: 'category_id',
+  name: 'topic',
+  id: 'topic_id',
 };
 
 const initialState = {};

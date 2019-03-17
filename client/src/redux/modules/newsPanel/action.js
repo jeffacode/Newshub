@@ -8,15 +8,15 @@ import voteStrategies from 'constant/voteStrategies';
 import actionTypes from './actionTypes';
 import { getPageById } from './reducer';
 import { schema as newsListSchema } from '../entities/newsList';
-import { schema as categorySchema } from '../entities/category';
+import { schema as topicSchema } from '../entities/topic';
 
-export const fetchCategoryNewsList = queries => (dispatch) => {
-  const createFetchCategoryNewsList = getAysncActionCreator(
+export const fetchTopicNewsList = queries => (dispatch) => {
+  const createFetchTopicNewsList = getAysncActionCreator(
     FETCH,
-    actionTypes.fetchCategoryNewsList,
+    actionTypes.fetchTopicNewsList,
     newsListSchema,
   );
-  return dispatch(createFetchCategoryNewsList(url.fetchCategoryNewsList(), queries));
+  return dispatch(createFetchTopicNewsList(url.fetchTopicNewsList(), queries));
 };
 
 export const fetchFeedNewsList = queries => (dispatch) => {
@@ -59,13 +59,13 @@ export const clearNewsList = () => ({
   type: actionTypes.clearNewsList,
 });
 
-export const fetchCategory = cid => (dispatch) => {
-  const createFetchCategory = getAysncActionCreator(
+export const fetchTopic = tid => (dispatch) => {
+  const createFetchTopic = getAysncActionCreator(
     FETCH,
-    actionTypes.fetchCategory,
-    categorySchema,
+    actionTypes.fetchTopic,
+    topicSchema,
   );
-  return dispatch(createFetchCategory(url.fetchCategory(cid)));
+  return dispatch(createFetchTopic(url.fetchTopic(tid)));
 };
 
 export const voteNews = (id, votes, voted, state) => (dispatch) => {

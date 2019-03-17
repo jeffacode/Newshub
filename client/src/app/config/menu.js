@@ -62,8 +62,8 @@ export const getUserSettingsMenu = () => [
         path: 'images',
       },
       {
-        name: 'userSettings_profile_category',
-        path: 'category',
+        name: 'userSettings_profile_topic',
+        path: 'topic',
       },
       {
         name: 'userSettings_profile_adavanced',

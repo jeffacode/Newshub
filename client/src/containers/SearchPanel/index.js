@@ -10,7 +10,7 @@ import {
   unsubscribe,
 } from 'redux/modules/searchPanel/action';
 import { getSearchResults } from 'redux/modules/searchPanel/reducer';
-import SearchCategory from './components/SearchCategory';
+import SearchTopic from './components/SearchTopic';
 
 class SearchPanel extends Component {
   constructor(props) {
@@ -52,15 +52,15 @@ class SearchPanel extends Component {
     return null;
   }
 
-  onSubscribeBtnClick = (cid, subscribed) => {
+  onSubscribeBtnClick = (tid, subscribed) => {
     const {
       subscribe,
       unsubscribe,
     } = this.props;
     if (subscribed) {
-      unsubscribe(cid);
+      unsubscribe(tid);
     } else {
-      subscribe(cid);
+      subscribe(tid);
     }
   }
 
@@ -68,7 +68,7 @@ class SearchPanel extends Component {
     const { searchResults, intl } = this.props;
     return (
       <div className="newsPanel">
-        <SearchCategory
+        <SearchTopic
           categories={searchResults}
           onSubscribeBtnClick={this.onSubscribeBtnClick}
           intl={intl}

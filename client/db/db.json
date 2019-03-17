@@ -90,7 +90,7 @@
       "voted": 0,
       "saved": false,
       "hidden": false,
-      "category": "home",
+      "topic": "home",
       "source": {
         "id": null,
         "name": "Forbes.com"
@@ -109,7 +109,7 @@
       "voted": 1,
       "saved": false,
       "hidden": true,
-      "category": "home",
+      "topic": "home",
       "source": {
         "id": null,
         "name": "Stackoverflow.com"
@@ -128,7 +128,7 @@
       "voted": -1,
       "saved": true,
       "hidden": false,
-      "category": "home",
+      "topic": "home",
       "source": {
         "id": null,
         "name": "Ieee.org"
@@ -147,7 +147,7 @@
       "voted": 0,
       "saved": false,
       "hidden": false,
-      "category": "home",
+      "topic": "home",
       "source": {
         "id": null,
         "name": "Forbes.com"
@@ -166,7 +166,7 @@
       "voted": 0,
       "saved": true,
       "hidden": false,
-      "category": "popular",
+      "topic": "popular",
       "source": {
         "id": null,
         "name": "Yahoo.com"
@@ -185,7 +185,7 @@
       "voted": 0,
       "saved": false,
       "hidden": false,
-      "category": "popular",
+      "topic": "popular",
       "source": {
         "id": "crypto-coins-news",
         "name": "Crypto Coins News"
@@ -204,7 +204,7 @@
       "voted": 0,
       "saved": false,
       "hidden": false,
-      "category": "popular",
+      "topic": "popular",
       "source": {
         "id": null,
         "name": "Plos.org"
@@ -223,7 +223,7 @@
       "voted": 0,
       "saved": false,
       "hidden": false,
-      "category": "popular",
+      "topic": "popular",
       "source": {
         "id": null,
         "name": "Hackernoon.com"
@@ -242,7 +242,7 @@
       "voted": 0,
       "saved": false,
       "hidden": false,
-      "category": "culture",
+      "topic": "culture",
       "source": {
         "id": null,
         "name": "Hacked.com"
@@ -261,7 +261,7 @@
       "voted": 1,
       "saved": false,
       "hidden": false,
-      "category": "tech",
+      "topic": "tech",
       "source": {
         "id": "the-next-web",
         "name": "The Next Web"
@@ -280,7 +280,7 @@
       "voted": -1,
       "saved": false,
       "hidden": false,
-      "category": "photograph",
+      "topic": "photograph",
       "source": {
         "id": "the-next-web",
         "name": "The Next Web"
@@ -299,7 +299,7 @@
       "voted": 0,
       "saved": false,
       "hidden": false,
-      "category": "time control",
+      "topic": "time control",
       "source": {
         "id": "the-next-web",
         "name": "The Next Web"
@@ -318,7 +318,7 @@
       "voted": 0,
       "saved": false,
       "hidden": false,
-      "category": "time control",
+      "topic": "time control",
       "source": {
         "id": null,
         "name": "Vox.com"

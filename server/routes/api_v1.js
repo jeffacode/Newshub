@@ -29,9 +29,9 @@ router.delete('/notices/:id', authCheckMiddleware, function(req, res, next) {
   });
 });
 
-// fetchCategory
-router.get('/category', function(req, res, next) {
-  client.request('fetchCategory', [req.query.cid], function(err, response) {
+// fetchTopic
+router.get('/topic', function(req, res, next) {
+  client.request('fetchTopic', [req.query.tid], function(err, response) {
     if (response && response.result) {
       return res.json(response.result);
     }
@@ -51,7 +51,7 @@ router.get('/subscriptions', authCheckMiddleware, function(req, res, next) {
 
 // subscribe
 router.post('/subscriptions', authCheckMiddleware, function(req, res, next) {
-  client.request('subscribe', [req.uid, req.body.cid], function(err, response) {
+  client.request('subscribe', [req.uid, req.body.tid], function(err, response) {
     if (response && response.result) {
       return res.json(response.result);
     }
@@ -60,8 +60,8 @@ router.post('/subscriptions', authCheckMiddleware, function(req, res, next) {
 });
 
 // unsubscribe
-router.delete('/subscriptions/:cid', authCheckMiddleware, function(req, res, next) {
-  client.request('unsubscribe', [req.uid, req.params.cid], function(err, response) {
+router.delete('/subscriptions/:tid', authCheckMiddleware, function(req, res, next) {
+  client.request('unsubscribe', [req.uid, req.params.tid], function(err, response) {
     if (response && response.result) {
       return res.json(response.result);
     }
@@ -79,14 +79,14 @@ router.get('/search', authCheckMiddleware, function(req, res, next) {
   });
 });
 
-// fetchCategoryNewsList
-router.get('/categoryNews', authCheckMiddleware, function(req, res, next) {
+// fetchTopicNewsList
+router.get('/topicNews', authCheckMiddleware, function(req, res, next) {
   var uid = req.uid;
-  var cid = req.query.cid;
+  var tid = req.query.tid;
   var page = req.query.page;
   var t = req.query.t || 'week';
   var p = req.query.p || 'new';
-  client.request('fetchCategoryNewsList', [uid, cid, page, t, p], function(err, response) {
+  client.request('fetchTopicNewsList', [uid, tid, page, t, p], function(err, response) {
     if (response && response.result) {
       return res.json(response.result);
     }

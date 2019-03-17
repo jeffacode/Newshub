@@ -5,10 +5,10 @@ export default {
   deleteNotice: id => `/v1/notices/${id}`, // DELETE
   fetchSubscriptions: () => '/v1/subscriptions', // GET
   subscribe: () => '/v1/subscriptions', // POST
-  unsubscribe: cid => `/v1/subscriptions/${cid}`, // DELETE
+  unsubscribe: tid => `/v1/subscriptions/${tid}`, // DELETE
   fetchSearchResults: searchQuery => `/v1/search${searchQuery}`, // GET
-  fetchCategory: cid => `/v1/category?cid=${cid}`, // GET 根据query cid来判断是哪个分类的数据
-  fetchCategoryNewsList: () => '/v1/categoryNews', // GET 根据query cid来判断取哪个分类的新闻
+  fetchTopic: tid => `/v1/topic?tid=${tid}`, // GET 根据query tid来判断是哪个分类的数据
+  fetchTopicNewsList: () => '/v1/topicNews', // GET 根据query tid来判断取哪个分类的新闻
   fetchFeedNewsList: () => '/v1/feedNews', // GET 根据query feed来判断取哪个推送栏目的新闻
   fetchVotedNewsList: () => '/v1/votedNews', // GET 根据query v来判断取的是upvoted还是downvoted
   fetchSavedNewsList: () => '/v1/savedNews', // GET

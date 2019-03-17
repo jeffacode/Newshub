@@ -24,7 +24,7 @@ USER_TABLE_NAME = 'user'
 NOTICE_TABLE_NAME = 'notice'
 SUBSCRIPTION_TABLE_NAME = 'subscription'
 NEWS_TABLE_NAME = 'news'
-CATEGORY_TABLE_NAME = 'category'
+TOPIC_TABLE_NAME = 'topic'
 VOTEDNEWS_TABLE_NAME = 'votedNews'
 SAVEDNEWS_TABLE_NAME = 'savedNews'
 HIDDENNEWS_TABLE_NAME = 'hiddenNews'
@@ -133,13 +133,13 @@ def deleteNotice(id):
         return e
 
 
-def fetchCategory(category_id):
+def fetchTopic(topic_id):
     try:
         db = mongodb_client.get_db()
-        category = db[CATEGORY_TABLE_NAME].find_one(
-            {'category_id': category_id})
-        del category['_id']
-        return json.loads(dumps(category))
+        topic = db[TOPIC_TABLE_NAME].find_one(
+            {'topic_id': topic_id})
+        del topic['_id']
+        return json.loads(dumps(topic))
     except Exception as e:
         return e
 
@@ -151,29 +151,29 @@ def fetchSubscriptions(user_id):
             {'user_id': ObjectId(user_id)}))
         subscribed_categories = []
         for subscription in subscriptions:
-            category = db[CATEGORY_TABLE_NAME].find_one(
-                {'category_id': subscription['category_id']})
-            del category['_id']
-            subscribed_categories.append(category)
+            topic = db[TOPIC_TABLE_NAME].find_one(
+                {'topic_id': subscription['topic_id']})
+            del topic['_id']
+            subscribed_categories.append(topic)
         return json.loads(dumps(subscribed_categories))
     except Exception as e:
         return e
 
 
-def subscribe(user_id, category_id):
+def subscribe(user_id, topic_id):
     try:
         db = mongodb_client.get_db()
         # 创建新的订阅数据
         db[SUBSCRIPTION_TABLE_NAME].insert({
             'user_id': ObjectId(user_id),
-            'category_id': category_id
+            'topic_id': topic_id
         })
         # 更新订阅人数
-        category = db[CATEGORY_TABLE_NAME].find_one(
-            {'category_id': category_id})
-        new_subscribers = category['subscribers'] + 1
-        db[CATEGORY_TABLE_NAME].update_one(
-            {'category_id': category_id},
+        topic = db[TOPIC_TABLE_NAME].find_one(
+            {'topic_id': topic_id})
+        new_subscribers = topic['subscribers'] + 1
+        db[TOPIC_TABLE_NAME].update_one(
+            {'topic_id': topic_id},
             {'$set': {'subscribers': new_subscribers}
              })
         return 'Successfully subscribed!'
@@ -181,20 +181,20 @@ def subscribe(user_id, category_id):
         return e
 
 
-def unsubscribe(user_id, category_id):
+def unsubscribe(user_id, topic_id):
     try:
         db = mongodb_client.get_db()
         # 删除订阅数据
         db[SUBSCRIPTION_TABLE_NAME].delete_one({
             'user_id': ObjectId(user_id),
-            'category_id': category_id
+            'topic_id': topic_id
         })
         # 更新订阅人数
-        category = db[CATEGORY_TABLE_NAME].find_one(
-            {'category_id': category_id})
-        new_subscribers = category['subscribers'] - 1
-        db[CATEGORY_TABLE_NAME].update_one(
-            {'category_id': category_id},
+        topic = db[TOPIC_TABLE_NAME].find_one(
+            {'topic_id': topic_id})
+        new_subscribers = topic['subscribers'] - 1
+        db[TOPIC_TABLE_NAME].update_one(
+            {'topic_id': topic_id},
             {'$set': {'subscribers': new_subscribers}
              })
         return 'Successfully unsubscribed!'
@@ -205,27 +205,27 @@ def unsubscribe(user_id, category_id):
 def fetchSearchResults(user_id):
     try:
         db = mongodb_client.get_db()
-        categories = list(db[CATEGORY_TABLE_NAME].find())
+        categories = list(db[TOPIC_TABLE_NAME].find())
         search_results = []
-        for category in categories:
+        for topic in categories:
             if len(list(db[SUBSCRIPTION_TABLE_NAME].find({
                 'user_id': ObjectId(user_id),
-                    'category_id': category['category_id']}))) == 0:
-                category['subscribed'] = False
+                    'topic_id': topic['topic_id']}))) == 0:
+                topic['subscribed'] = False
             else:
-                category['subscribed'] = True
-            del category['_id']
-            search_results.append(category)
+                topic['subscribed'] = True
+            del topic['_id']
+            search_results.append(topic)
         return json.loads(dumps(search_results))
     except Exception as e:
         return e
 
-def fetchCategoryNewsList(user_id, category_id, page, time, popularity):
+def fetchTopicNewsList(user_id, topic_id, page, time, popularity):
     try:
         db = mongodb_client.get_db()
         user_id = ObjectId(user_id)
         page = int(page)
-        pipeline = match(time, {'category_id': category_id}) + \
+        pipeline = match(time, {'topic_id': topic_id}) + \
                     sort(popularity) + \
                     paginate(page)
         page_data = list(db[NEWS_TABLE_NAME].aggregate(pipeline))[0]
@@ -242,7 +242,7 @@ def fetchFeedNewsList(user_id, feed, page, time, popularity):
         # 返回当前用户订阅的所有分类的新闻数据
         if feed == 'home':
             pipeline = match(time, {'user_id': user_id}) + \
-                        lookup(NEWS_TABLE_NAME, 'category_id', 'category_id', 'news') + \
+                        lookup(NEWS_TABLE_NAME, 'topic_id', 'topic_id', 'news') + \
                         unwind('$news') + \
                         replaceRoot('$news') + \
                         sort(popularity) + \

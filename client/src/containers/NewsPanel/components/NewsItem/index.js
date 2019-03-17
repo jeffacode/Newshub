@@ -104,7 +104,7 @@ class NewsItem extends Component {
     });
   }
 
-  onReportCategorySelected = (val) => {
+  onReportTopicSelected = (val) => {
     console.log(val);
   }
 
@@ -166,7 +166,7 @@ class NewsItem extends Component {
           <Select
             defaultValue={intl.formatMessage({ id: 'modal_reportOption_default' })}
             style={{ width: '100%' }}
-            onSelect={this.onReportCategorySelected}
+            onSelect={this.onReportTopicSelected}
           >
             <Option value="spam">
               <Icon type="warning" className="mr-10" />
@@ -317,15 +317,15 @@ class NewsItem extends Component {
 
   onTagClick = (e) => {
     e.stopPropagation();
-    const { news: { top_id: cid }, history } = this.props;
-    history.push(`/c/${cid}`);
+    const { news: { top_id: tid }, history } = this.props;
+    history.push(`/c/${tid}`);
   }
 
   renderRightContentWithCardView = () => {
     const { news, intl } = this.props;
     const {
       id,
-      top_id: cid,
+      top_id: tid,
       source,
       title,
       description,
@@ -338,7 +338,7 @@ class NewsItem extends Component {
     return (
       <div className="newsItem__rightContent">
         <div className="newsItem__source">
-          <Tag color="#108ee9" onClick={this.onTagClick}>{cid}</Tag>
+          <Tag color="#108ee9" onClick={this.onTagClick}>{tid}</Tag>
           {source}
         </div>
         <h2 className="newsItem__title ft-bold">{title}</h2>

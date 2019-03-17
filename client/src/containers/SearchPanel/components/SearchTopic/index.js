@@ -5,30 +5,30 @@ import formatNumber from 'utils/formatNumber';
 import { Icon, Button } from 'antd';
 import './style.scss';
 
-const SearchCategory = ({ categories, onSubscribeBtnClick, intl }) => (
-  <div className="searchCategory">
-    <div className="searchCategory__title">
-      {intl.formatMessage({ id: 'searchCategory_title' })}
+const SearchTopic = ({ categories, onSubscribeBtnClick, intl }) => (
+  <div className="searchTopic">
+    <div className="searchTopic__title">
+      {intl.formatMessage({ id: 'searchTopic_title' })}
     </div>
-    <div className="searchCategory__content">
+    <div className="searchTopic__content">
       {map(categories, ({
-        category_id: cid, icon, subscribers, subscribed,
+        topic_id: tid, icon, subscribers, subscribed,
       }) => (
-        <div className="searchCategory__category" key={cid}>
-          <div className="searchCategory__category__icon">
+        <div className="searchTopic__topic" key={tid}>
+          <div className="searchTopic__topic__icon">
             <Icon type={icon} />
           </div>
-          <div className="searchCategory__category__title">
-            <div className="searchCategory__category__name">{`c/${cid}`}</div>
-            <div className="searchCategory__category__subscribers">
+          <div className="searchTopic__topic__title">
+            <div className="searchTopic__topic__name">{`c/${tid}`}</div>
+            <div className="searchTopic__topic__subscribers">
               {`${formatNumber(subscribers)} `}
               {intl.formatMessage({ id: 'subscribers_count' })}
             </div>
           </div>
-          <div className="searchCategory__category__subscribeBtn">
+          <div className="searchTopic__topic__subscribeBtn">
             <Button
               type={subscribed ? 'primary' : 'default'}
-              onClick={() => onSubscribeBtnClick(cid, subscribed)}
+              onClick={() => onSubscribeBtnClick(tid, subscribed)}
             >
               {intl.formatMessage({ id: subscribed ? 'subscribed' : 'subscribe' })}
             </Button>
@@ -39,10 +39,10 @@ const SearchCategory = ({ categories, onSubscribeBtnClick, intl }) => (
   </div>
 );
 
-SearchCategory.propTypes = {
+SearchTopic.propTypes = {
   categories: PropTypes.array.isRequired,
   onSubscribeBtnClick: PropTypes.func.isRequired,
   intl: PropTypes.object.isRequired,
 };
 
-export default SearchCategory;
+export default SearchTopic;

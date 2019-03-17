@@ -6,7 +6,7 @@ import {
 } from 'utils/createAsyncAction';
 import url from 'utils/url';
 import actionTypes from './actionTypes';
-import { schema as searchResultsSchema, getSearchResultByCid } from '../entities/searchResults';
+import { schema as searchResultsSchema, getSearchResultByTid } from '../entities/searchResults';
 import { fetchSubscriptions } from '../app/action';
 
 export const fetchSearchResults = searchQuery => (dispatch) => {
@@ -22,36 +22,36 @@ export const clearSearchResults = () => ({
   type: actionTypes.clearSearchResults,
 });
 
-export const changeSearchResultByCid = (cid, data) => ({
-  type: actionTypes.changeSearchResultByCid,
-  payload: { cid, data },
+export const changeSearchResultByTid = (tid, data) => ({
+  type: actionTypes.changeSearchResultByTid,
+  payload: { tid, data },
 });
 
-export const subscribe = cid => (dispatch, getState) => {
+export const subscribe = tid => (dispatch, getState) => {
   const createSubscribe = getAysncActionCreator(
     POST,
     actionTypes.subscribe,
   );
-  return dispatch(createSubscribe(url.subscribe(), { cid }))
+  return dispatch(createSubscribe(url.subscribe(), { tid }))
     .then(() => {
-      dispatch(changeSearchResultByCid(cid, {
+      dispatch(changeSearchResultByTid(tid, {
         subscribed: true,
-        subscribers: getSearchResultByCid(getState(), cid).subscribers + 1,
+        subscribers: getSearchResultByTid(getState(), tid).subscribers + 1,
       }));
       dispatch(fetchSubscriptions()); // 同步更新AppHeader里的“我的订阅”
     });
 };
 
-export const unsubscribe = cid => (dispatch, getState) => {
+export const unsubscribe = tid => (dispatch, getState) => {
   const createUnsubscribe = getAysncActionCreator(
     DELETE,
     actionTypes.unsubscribe,
   );
-  return dispatch(createUnsubscribe(url.unsubscribe(cid)))
+  return dispatch(createUnsubscribe(url.unsubscribe(tid)))
     .then(() => {
-      dispatch(changeSearchResultByCid(cid, {
+      dispatch(changeSearchResultByTid(tid, {
         subscribed: false,
-        subscribers: getSearchResultByCid(getState(), cid).subscribers - 1,
+        subscribers: getSearchResultByTid(getState(), tid).subscribers - 1,
       }));
       dispatch(fetchSubscriptions()); // 同步更新AppHeader里的“我的订阅”
     });

@@ -2,14 +2,14 @@ import { combineReducers } from 'redux';
 import notices from './notices';
 import subscriptions from './subscriptions';
 import newsList from './newsList';
-import category from './category';
+import topic from './topic';
 import searchResults from './searchResults';
 
 const entitiesReducer = combineReducers({
   notices,
   subscriptions,
   newsList,
-  category,
+  topic,
   searchResults,
 });
 

@@ -76,10 +76,10 @@ class AppHeader extends Component {
     });
   }
 
-  unsubscribe = (e, cid) => {
+  unsubscribe = (e, tid) => {
     e.stopPropagation(); // 阻止事件冒泡
     const { unsubscribe } = this.props;
-    unsubscribe(cid);
+    unsubscribe(tid);
   }
 
   filterItems = (items, keyword) => filter(
@@ -92,8 +92,8 @@ class AppHeader extends Component {
 
   filterItemswithSubscriptionIcon = (items, keyword) => filter(
     items,
-    ({ category_id: cid }) => includes(
-      cid.toLowerCase(),
+    ({ topic_id: tid }) => includes(
+      tid.toLowerCase(),
       keyword.toLowerCase(),
     ),
   )
@@ -121,26 +121,26 @@ class AppHeader extends Component {
 
   renderNDIwithSubscriptionIcon = (item) => {
     const {
-      category_id: cid, icon,
+      topic_id: tid, icon,
     } = item;
     return (
       <div
-        key={cid}
+        key={tid}
         className="appHeader__navigatorDropdownItem"
         onClick={this.switchNavigatorDropdown}
         role="presentation"
       >
-        <Link to={`/c/${cid}`}>
+        <Link to={`/c/${tid}`}>
           <div className="appHeader__navigatorDropdownItem__leftIcon">
             <Icon type={icon} style={iconStyles.blue} />
           </div>
           <div className="appHeader__navigatorDropdownItem__content">
-            {cid}
+            {tid}
           </div>
         </Link>
         <div
           className="appHeader__navigatorDropdownItem__rightIcon"
-          onClick={e => this.unsubscribe(e, cid)}
+          onClick={e => this.unsubscribe(e, tid)}
           role="presentation"
         >
           <Icon type="star" theme="filled" style={iconStyles.yellow} />

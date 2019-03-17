@@ -101,6 +101,14 @@ export const hideNews = (id, hidden) => (dispatch) => {
     .then(() => dispatch(changeNewsById(id, { hidden })));
 };
 
+export const sendClickLog = id => (dispatch) => {
+  const createSendClickLog = getAysncActionCreator(
+    POST,
+    actionTypes.sendClickLog,
+  );
+  return dispatch(createSendClickLog(url.sendClickLog(), { id }));
+};
+
 export const changeNewsById = (id, data) => (dispatch, getState) => dispatch({
   type: actionTypes.changeNewsById,
   payload: {

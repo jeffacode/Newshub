@@ -3,7 +3,6 @@ import os
 import sys
 import math
 import random
-import datetime
 import hashlib
 import base64
 import redis
@@ -77,7 +76,7 @@ try:
                         
                             if news['publishedAt'] is None:
                                 # format: YYYY-MM-DDTHH:MM:SS in UTC
-                                news['publishedAt'] = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+                                news['publishedAt'] = moment.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
                             
                             redis_client.set(news_digest, news['title']) # redis里存一份从news digest到title的映射
                             redis_client.expire(news_digest, NEWS_TIME_OUT_IN_SECONDS)  # 过期后自动清除

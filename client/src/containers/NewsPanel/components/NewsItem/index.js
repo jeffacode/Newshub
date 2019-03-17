@@ -56,8 +56,10 @@ class NewsItem extends Component {
     hideNews(id, !hidden);
   }
 
-  onNewsItemClick = (url) => {
-    window.open(url);
+  onNewsItemClick = (id, url) => {
+    const { sendClickLog } = this.props;
+    sendClickLog(id);
+    window.open(url, '_blank');
   }
 
   showShareNewsModal = (e) => {
@@ -315,7 +317,7 @@ class NewsItem extends Component {
 
   onTagClick = (e) => {
     e.stopPropagation();
-    const { news: { category_id: cid }, history } = this.props;
+    const { news: { top_id: cid }, history } = this.props;
     history.push(`/c/${cid}`);
   }
 
@@ -323,7 +325,7 @@ class NewsItem extends Component {
     const { news, intl } = this.props;
     const {
       id,
-      category_id: cid,
+      top_id: cid,
       source,
       title,
       description,
@@ -469,7 +471,7 @@ class NewsItem extends Component {
   render() {
     const { isShareModalVisible, isReportModalVisible } = this.state;
     const { view: { type }, news } = this.props;
-    const { url } = news;
+    const { id, url } = news;
     const classNames = classnames({
       newsItem: true,
       [type]: true,
@@ -479,7 +481,7 @@ class NewsItem extends Component {
       <Fragment>
         <div
           className={classNames}
-          onClick={() => this.onNewsItemClick(url)}
+          onClick={() => this.onNewsItemClick(id, url)}
           role="presentation"
         >
           {this.renderLeftContent()}
@@ -500,6 +502,7 @@ NewsItem.propTypes = {
   voteNews: PropTypes.func.isRequired,
   saveNews: PropTypes.func.isRequired,
   hideNews: PropTypes.func.isRequired,
+  sendClickLog: PropTypes.func.isRequired,
   intl: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
 };

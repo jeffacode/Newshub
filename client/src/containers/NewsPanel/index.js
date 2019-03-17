@@ -14,6 +14,7 @@ import {
   voteNews,
   saveNews,
   hideNews,
+  sendClickLog,
   changePage,
 } from 'redux/modules/newsPanel/action';
 import {
@@ -383,6 +384,7 @@ class NewsPanel extends Component {
       voteNews,
       saveNews,
       hideNews,
+      sendClickLog,
       intl,
       history,
       match: { params: { cid } },
@@ -434,6 +436,7 @@ class NewsPanel extends Component {
               voteNews={voteNews}
               saveNews={saveNews}
               hideNews={hideNews}
+              sendClickLog={sendClickLog}
               intl={intl}
               history={history}
             />
@@ -467,6 +470,7 @@ NewsPanel.propTypes = {
   voteNews: PropTypes.func.isRequired,
   saveNews: PropTypes.func.isRequired,
   hideNews: PropTypes.func.isRequired,
+  sendClickLog: PropTypes.func.isRequired,
   changePage: PropTypes.func.isRequired,
   intl: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
@@ -494,6 +498,7 @@ const mapDispatchToProps = {
   voteNews,
   saveNews,
   hideNews,
+  sendClickLog,
   changePage,
 };
 

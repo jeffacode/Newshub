@@ -189,4 +189,16 @@ router.get('/hiddenNews', authCheckMiddleware, function(req, res, next) {
   });
 });
 
+// sendClickLog
+router.post('/clickLog', authCheckMiddleware, function(req, res, next) {
+  var user_id = req.uid;
+  var news_id = req.body.id;
+  client.request('sendClickLog', [user_id, news_id], function(err, response) {
+    if (response && response.result) {
+      return res.json(response.result);
+    }
+    return res.status(500).end();
+  });
+});
+
 module.exports = router;

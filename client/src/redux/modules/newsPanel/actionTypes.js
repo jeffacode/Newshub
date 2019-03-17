@@ -13,6 +13,7 @@ const actionTypes = {
   voteNews: createAsyncActionTypes(MODULE, 'VOTE_NEWS'), // 投票
   saveNews: createAsyncActionTypes(MODULE, 'SAVE_NEWS'), // 收藏
   hideNews: createAsyncActionTypes(MODULE, 'HIDE_NEWS'), // 隐藏
+  sendClickLog: createAsyncActionTypes(MODULE, 'SEND_CLICK_LOG'), // 创建点击日志
   changeNewsById: `${MODULE}/CHANGE_NEWS_BY_ID`, // 更改新闻数据
   changePage: `${MODULE}/CHANGE_PAGE`, // 更改当前页码
 };

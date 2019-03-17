@@ -14,7 +14,7 @@ import mongodb_client
 DEDUPE_NEWS_TASK_QUEUE_URL = 'amqp://rdisyaqq:by5EeV8qAdbjsDOh56T8p2N2tMdM6oxD@dinosaur.rmq.cloudamqp.com/rdisyaqq'
 DEDUPE_NEWS_TASK_QUEUE_NAME = 'newshub-dedupe-news-task-queue'
 
-SLEEP_TIME_IN_SECONDS = math.ceil((6 * 3600) / (20 * 250))
+SLEEP_TIME_IN_SECONDS = math.ceil((6 * 3600) / (20 * 250)) + 3
 NEWS_TABLE_NAME = 'news'
 SAME_NEWS_SIMILARITY_THRESHOLD = 0.8
 

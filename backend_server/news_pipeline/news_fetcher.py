@@ -46,7 +46,7 @@ try:
     while scrape_news_queue_client is not None:
         msg = scrape_news_queue_client.getMessage()
         handle_message(msg)
-        # scrape_news_queue_client.sleep(SLEEP_TIME_IN_SECONDS)
+        scrape_news_queue_client.sleep(SLEEP_TIME_IN_SECONDS)
 except Exception as e:
     print('[local time: %s]News fetcher ends.' % moment.now().format("YYYY-M-D H:M"))
     print(e)

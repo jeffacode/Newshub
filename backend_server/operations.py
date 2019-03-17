@@ -10,8 +10,16 @@ sys.path.append(os.path.join(os.path.dirname(__file__), './', 'common'))
 sys.path.append(os.path.join(os.path.dirname(__file__), './', 'utils'))
 
 import mongodb_client
+from cloudAMQP_client import CloudAMQPClient
 import strategies
 
+CLICKLOGS_TASK_QUEUE_URL = 'amqp://rdisyaqq:by5EeV8qAdbjsDOh56T8p2N2tMdM6oxD@dinosaur.rmq.cloudamqp.com/rdisyaqq'
+CLICKLOGS_TASK_QUEUE_NAME = 'newshub-click-logs-task-queue'
+
+cloudAMQP_client = CloudAMQPClient(
+    CLICKLOGS_TASK_QUEUE_URL, CLICKLOGS_TASK_QUEUE_NAME)
+
+PAGE_SIZE = 10
 USER_TABLE_NAME = 'user'
 NOTICE_TABLE_NAME = 'notice'
 SUBSCRIPTION_TABLE_NAME = 'subscription'
@@ -20,10 +28,7 @@ CATEGORY_TABLE_NAME = 'category'
 VOTEDNEWS_TABLE_NAME = 'votedNews'
 SAVEDNEWS_TABLE_NAME = 'savedNews'
 HIDDENNEWS_TABLE_NAME = 'hiddenNews'
-
-PAGE_SIZE = 10
-
-db = mongodb_client.get_db()
+CLICKLOGS_TABLE_NAME = 'clickLogs'
 
 
 def match(time, fields={}):
@@ -69,7 +74,7 @@ def paginate(page):
         }
     ]
 
-def processPageData(page_data, user_id):
+def processPageData(db, page_data, user_id):
     if 'data' not in page_data:
         page_data['data'] = []
     result_news_list = []
@@ -106,6 +111,7 @@ def processPageData(page_data, user_id):
 
 def getNotices(user_id):
     try:
+        db = mongodb_client.get_db()
         notices = list(db[NOTICE_TABLE_NAME].find(
             {'user_id': ObjectId(user_id)}))
         for notice in notices:
@@ -119,6 +125,8 @@ def getNotices(user_id):
 
 def deleteNotice(id):
     try:
+        db = mongodb_client.get_db()
+        db = mongodb_client.get_db()
         db[NOTICE_TABLE_NAME].delete_many({'_id': ObjectId(id)})
         return 'Successfully deleted!'
     except Exception as e:
@@ -127,6 +135,7 @@ def deleteNotice(id):
 
 def fetchCategory(category_id):
     try:
+        db = mongodb_client.get_db()
         category = db[CATEGORY_TABLE_NAME].find_one(
             {'category_id': category_id})
         del category['_id']
@@ -137,6 +146,7 @@ def fetchCategory(category_id):
 
 def fetchSubscriptions(user_id):
     try:
+        db = mongodb_client.get_db()
         subscriptions = list(db[SUBSCRIPTION_TABLE_NAME].find(
             {'user_id': ObjectId(user_id)}))
         subscribed_categories = []
@@ -152,6 +162,7 @@ def fetchSubscriptions(user_id):
 
 def subscribe(user_id, category_id):
     try:
+        db = mongodb_client.get_db()
         # 创建新的订阅数据
         db[SUBSCRIPTION_TABLE_NAME].insert({
             'user_id': ObjectId(user_id),
@@ -172,6 +183,7 @@ def subscribe(user_id, category_id):
 
 def unsubscribe(user_id, category_id):
     try:
+        db = mongodb_client.get_db()
         # 删除订阅数据
         db[SUBSCRIPTION_TABLE_NAME].delete_one({
             'user_id': ObjectId(user_id),
@@ -192,6 +204,7 @@ def unsubscribe(user_id, category_id):
 
 def fetchSearchResults(user_id):
     try:
+        db = mongodb_client.get_db()
         categories = list(db[CATEGORY_TABLE_NAME].find())
         search_results = []
         for category in categories:
@@ -209,18 +222,20 @@ def fetchSearchResults(user_id):
 
 def fetchCategoryNewsList(user_id, category_id, page, time, popularity):
     try:
+        db = mongodb_client.get_db()
         user_id = ObjectId(user_id)
         page = int(page)
         pipeline = match(time, {'category_id': category_id}) + \
                     sort(popularity) + \
                     paginate(page)
         page_data = list(db[NEWS_TABLE_NAME].aggregate(pipeline))[0]
-        return processPageData(page_data, user_id)
+        return processPageData(db, page_data, user_id)
     except Exception as e:
         return e
 
 def fetchFeedNewsList(user_id, feed, page, time, popularity):
     try:
+        db = mongodb_client.get_db()
         user_id = ObjectId(user_id)
         page = int(page)
 
@@ -233,7 +248,7 @@ def fetchFeedNewsList(user_id, feed, page, time, popularity):
                         sort(popularity) + \
                         paginate(page)
             page_data = list(db[SUBSCRIPTION_TABLE_NAME].aggregate(pipeline))[0]
-            return processPageData(page_data, user_id)
+            return processPageData(db, page_data, user_id)
 
         # 返回votes排名靠前的新闻数据
         if feed == 'popular':
@@ -241,7 +256,7 @@ def fetchFeedNewsList(user_id, feed, page, time, popularity):
                         sort(popularity, {'votes': -1}) + \
                         paginate(page)
             page_data = list(db[NEWS_TABLE_NAME].aggregate(pipeline))[0]
-            return processPageData(page_data, user_id)
+            return processPageData(db, page_data, user_id)
         
         # 返回所有新闻数据
         if feed == 'all':
@@ -249,12 +264,13 @@ def fetchFeedNewsList(user_id, feed, page, time, popularity):
                         sort(popularity) + \
                         paginate(page)
             page_data = list(db[NEWS_TABLE_NAME].aggregate(pipeline))[0]
-            return processPageData(page_data, user_id)
+            return processPageData(db, page_data, user_id)
     except Exception as e:
         return e
 
 def voteNews(user_id, news_id, state):
     try:
+        db = mongodb_client.get_db()
         user_id = ObjectId(user_id)
         news_id = ObjectId(news_id)
         state = int(state)
@@ -297,6 +313,7 @@ def voteNews(user_id, news_id, state):
 
 def saveNews(user_id, news_id):
     try:
+        db = mongodb_client.get_db()
         user_id = ObjectId(user_id)
         news_id = ObjectId(news_id)
         savedNews = db[SAVEDNEWS_TABLE_NAME].find_one({'user_id': user_id, 'news_id': news_id})
@@ -310,6 +327,7 @@ def saveNews(user_id, news_id):
 
 def hideNews(user_id, news_id):
     try:
+        db = mongodb_client.get_db()
         user_id = ObjectId(user_id)
         news_id = ObjectId(news_id)
         hiddenNews = db[HIDDENNEWS_TABLE_NAME].find_one({'user_id': user_id, 'news_id': news_id})
@@ -323,6 +341,7 @@ def hideNews(user_id, news_id):
 
 def fetchVotedNews(user_id, v, page, time, popularity):
     try:
+        db = mongodb_client.get_db()
         user_id = ObjectId(user_id)
         v = int(v)
         page = int(page)
@@ -334,12 +353,13 @@ def fetchVotedNews(user_id, v, page, time, popularity):
                     sort(popularity) + \
                     paginate(page)
         page_data = list(db[VOTEDNEWS_TABLE_NAME].aggregate(pipeline))[0]
-        return processPageData(page_data, user_id)
+        return processPageData(db, page_data, user_id)
     except Exception as e:
         return e
 
 def fetchSavedNews(user_id, page, time, popularity):
     try:
+        db = mongodb_client.get_db()
         user_id = ObjectId(user_id)
         page = int(page)
         pipeline = [{'$match': {'user_id': user_id}}] + \
@@ -350,12 +370,13 @@ def fetchSavedNews(user_id, page, time, popularity):
                     sort(popularity) + \
                     paginate(page)
         page_data = list(db[SAVEDNEWS_TABLE_NAME].aggregate(pipeline))[0]
-        return processPageData(page_data, user_id)
+        return processPageData(db, page_data, user_id)
     except Exception as e:
         return e
 
 def fetchHiddenNews(user_id, page, time, popularity):
     try:
+        db = mongodb_client.get_db()
         user_id = ObjectId(user_id)
         page = int(page)
         pipeline = [{'$match': {'user_id': user_id}}] + \
@@ -366,6 +387,27 @@ def fetchHiddenNews(user_id, page, time, popularity):
                     sort(popularity) + \
                     paginate(page)
         page_data = list(db[HIDDENNEWS_TABLE_NAME].aggregate(pipeline))[0]
-        return processPageData(page_data, user_id)
+        return processPageData(db, page_data, user_id)
+    except Exception as e:
+        return e
+
+def sendClickLog(user_id, news_id):
+    try:
+        timestamp = moment.utcnow()
+
+        message = {'user_id': user_id, 'news_id': news_id, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')}
+        cloudAMQP_client.sendMessage(message)
+
+        # 在mongo中保留log
+        db = mongodb_client.get_db()
+        user_id = ObjectId(user_id)
+        news_id = ObjectId(news_id)
+        db[CLICKLOGS_TABLE_NAME].insert({
+            'user_id': user_id,
+            'news_id': news_id,
+            'timestamp': timestamp.date
+        })
+        return 'click log successfully saved!'
+
     except Exception as e:
         return e

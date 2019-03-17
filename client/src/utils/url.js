@@ -16,4 +16,5 @@ export default {
   voteNews: () => '/v1/votedNews', // POST body带上state字段，upvote是1，downvote是-1
   saveNews: () => '/v1/savedNews', // POST
   hideNews: () => '/v1/hiddenNews', // POST
+  sendClickLog: () => '/v1/clickLog', // POST
 };

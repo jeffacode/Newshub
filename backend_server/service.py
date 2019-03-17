@@ -79,6 +79,10 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
     def fetchHiddenNews(self, user_id, page, time, popularity):
         return operations.fetchHiddenNews(user_id, page, time, popularity)
 
+    @pyjsonrpc.rpcmethod
+    def sendClickLog(self, user_id, news_id):
+        return operations.sendClickLog(user_id, news_id)
+
 http_server = pyjsonrpc.ThreadingHttpServer(
     server_address=(SERVER_HOST, SERVER_PORT),
     RequestHandlerClass=RequestHandler

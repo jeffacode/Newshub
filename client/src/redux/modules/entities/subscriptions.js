@@ -2,7 +2,7 @@ import actionTypes from '../app/actionTypes';
 
 export const schema = {
   name: 'subscriptions',
-  id: 'id',
+  id: 'category_id',
 };
 
 const initialState = {};
@@ -12,9 +12,9 @@ const reducer = (state = initialState, action) => {
     return action.data[schema.name];
   }
 
-  if (action.type === actionTypes.clearSubscriptionById) {
-    const id = action.payload;
-    delete state[id];
+  if (action.type === actionTypes.clearSubscriptionByCid) {
+    const cid = action.payload;
+    delete state[cid];
     return { ...state };
   }
 

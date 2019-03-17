@@ -76,16 +76,24 @@ class AppHeader extends Component {
     });
   }
 
-  unsubscribe = (e, id) => {
+  unsubscribe = (e, cid) => {
     e.stopPropagation(); // 阻止事件冒泡
     const { unsubscribe } = this.props;
-    unsubscribe(id);
+    unsubscribe(cid);
   }
 
   filterItems = (items, keyword) => filter(
     items,
     ({ id }) => includes(
-      id,
+      id.toLowerCase(),
+      keyword.toLowerCase(),
+    ),
+  )
+
+  filterItemswithSubscriptionIcon = (items, keyword) => filter(
+    items,
+    ({ category_id: cid }) => includes(
+      cid.toLowerCase(),
       keyword.toLowerCase(),
     ),
   )
@@ -113,26 +121,26 @@ class AppHeader extends Component {
 
   renderNDIwithSubscriptionIcon = (item) => {
     const {
-      id, icon,
+      category_id: cid, icon,
     } = item;
     return (
       <div
-        key={id}
+        key={cid}
         className="appHeader__navigatorDropdownItem"
         onClick={this.switchNavigatorDropdown}
         role="presentation"
       >
-        <Link to={`/c/${id}`}>
+        <Link to={`/c/${cid}`}>
           <div className="appHeader__navigatorDropdownItem__leftIcon">
             <Icon type={icon} style={iconStyles.blue} />
           </div>
           <div className="appHeader__navigatorDropdownItem__content">
-            {id}
+            {cid}
           </div>
         </Link>
         <div
           className="appHeader__navigatorDropdownItem__rightIcon"
-          onClick={e => this.unsubscribe(e, id)}
+          onClick={e => this.unsubscribe(e, cid)}
           role="presentation"
         >
           <Icon type="star" theme="filled" style={iconStyles.yellow} />
@@ -169,7 +177,7 @@ class AppHeader extends Component {
             {intl.formatMessage({ id: 'appHeader_navigator_subscriptions' })}
           </div>
           {map(
-            this.filterItems(subscriptions, navigatorFilterKeyword),
+            this.filterItemswithSubscriptionIcon(subscriptions, navigatorFilterKeyword),
             item => this.renderNDIwithSubscriptionIcon(item),
           )}
         </div>

@@ -12,14 +12,14 @@ const SearchCategory = ({ categories, onSubscribeBtnClick, intl }) => (
     </div>
     <div className="searchCategory__content">
       {map(categories, ({
-        id, icon, subscribers, subscribed,
+        category_id: cid, icon, subscribers, subscribed,
       }) => (
-        <div className="searchCategory__category" key={id}>
+        <div className="searchCategory__category" key={cid}>
           <div className="searchCategory__category__icon">
             <Icon type={icon} />
           </div>
           <div className="searchCategory__category__title">
-            <div className="searchCategory__category__name">{`c/${id}`}</div>
+            <div className="searchCategory__category__name">{`c/${cid}`}</div>
             <div className="searchCategory__category__subscribers">
               {`${formatNumber(subscribers)} `}
               {intl.formatMessage({ id: 'subscribers_count' })}
@@ -28,7 +28,7 @@ const SearchCategory = ({ categories, onSubscribeBtnClick, intl }) => (
           <div className="searchCategory__category__subscribeBtn">
             <Button
               type={subscribed ? 'primary' : 'default'}
-              onClick={() => onSubscribeBtnClick(id, subscribed)}
+              onClick={() => onSubscribeBtnClick(cid, subscribed)}
             >
               {intl.formatMessage({ id: subscribed ? 'subscribed' : 'subscribe' })}
             </Button>

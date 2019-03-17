@@ -59,13 +59,13 @@ export const clearNewsList = () => ({
   type: actionTypes.clearNewsList,
 });
 
-export const fetchCategory = id => (dispatch) => {
+export const fetchCategory = cid => (dispatch) => {
   const createFetchCategory = getAysncActionCreator(
     FETCH,
     actionTypes.fetchCategory,
     categorySchema,
   );
-  return dispatch(createFetchCategory(url.fetchCategory(id)));
+  return dispatch(createFetchCategory(url.fetchCategory(cid)));
 };
 
 export const voteNews = (id, votes, voted, state) => (dispatch) => {

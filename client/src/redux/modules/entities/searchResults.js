@@ -2,7 +2,7 @@ import actionTypes from '../searchPanel/actionTypes';
 
 export const schema = {
   name: 'searchResults',
-  id: 'id',
+  id: 'category_id',
 };
 
 const initialState = {};
@@ -15,12 +15,12 @@ const reducer = (state = initialState, action) => {
     };
   }
 
-  if (action.type === actionTypes.changeSearchResultById) {
-    const { id, data } = action.payload;
+  if (action.type === actionTypes.changeSearchResultByCid) {
+    const { cid, data } = action.payload;
     return {
       ...state,
-      [id]: {
-        ...state[id],
+      [cid]: {
+        ...state[cid],
         ...data,
       },
     };
@@ -36,4 +36,4 @@ const reducer = (state = initialState, action) => {
 export default reducer;
 
 // selector
-export const getSearchResultById = (state, id) => state.entities.searchResults[id];
+export const getSearchResultByCid = (state, cid) => state.entities.searchResults[cid];

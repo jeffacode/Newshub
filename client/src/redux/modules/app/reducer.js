@@ -93,7 +93,7 @@ const subscriptions = (state = initialState.subscriptions, action) => {
         ...state,
         isFetching: false,
       };
-    case actionTypes.clearSubscriptionById:
+    case actionTypes.clearSubscriptionByCid:
       state.ids.splice(state.ids.indexOf(action.payload), 1);
       return { ...state };
     case actionTypes.clearSubscriptions:

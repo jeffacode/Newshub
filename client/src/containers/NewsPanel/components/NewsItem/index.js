@@ -315,7 +315,7 @@ class NewsItem extends Component {
 
   onTagClick = (e) => {
     e.stopPropagation();
-    const { news: { cid }, history } = this.props;
+    const { news: { category_id: cid }, history } = this.props;
     history.push(`/c/${cid}`);
   }
 
@@ -323,8 +323,8 @@ class NewsItem extends Component {
     const { news, intl } = this.props;
     const {
       id,
-      cid,
-      source: { name },
+      category_id: cid,
+      source,
       title,
       description,
       author,
@@ -337,7 +337,7 @@ class NewsItem extends Component {
       <div className="newsItem__rightContent">
         <div className="newsItem__source">
           <Tag color="#108ee9" onClick={this.onTagClick}>{cid}</Tag>
-          {name}
+          {source}
         </div>
         <h2 className="newsItem__title ft-bold">{title}</h2>
         <div className="newsItem__desc mb-5">{description}</div>
@@ -361,7 +361,7 @@ class NewsItem extends Component {
     const { news, intl } = this.props;
     const {
       id,
-      source: { name },
+      source,
       title,
       author,
       publishedAt,
@@ -378,7 +378,7 @@ class NewsItem extends Component {
           <h3 className="newsItem__title ft-bold">{title}</h3>
           <div className="newsItem__source">
             {intl.formatMessage({ id: 'newsItem_from' })}
-            {name}
+            {source}
           </div>
           <div className="newsItem__author">
             {intl.formatMessage({ id: 'newsItem_author' })}
@@ -398,7 +398,7 @@ class NewsItem extends Component {
     const { news, intl } = this.props;
     const {
       id,
-      source: { name },
+      source,
       title,
       author,
       publishedAt,
@@ -411,7 +411,7 @@ class NewsItem extends Component {
           <h4 className="newsItem__title ft-bold">{title}</h4>
           <div className="newsItem__source">
             {intl.formatMessage({ id: 'newsItem_from' })}
-            {name}
+            {source}
           </div>
           <div className="newsItem__author">
             {intl.formatMessage({ id: 'newsItem_author' })}

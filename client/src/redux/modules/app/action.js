@@ -11,8 +11,8 @@ import actionTypes from './actionTypes';
 import { schema as noticesSchema } from '../entities/notices';
 import { schema as subscriptionsSchema } from '../entities/subscriptions';
 import { fetchCategory, clearNewsList } from '../newsPanel/action';
-import { clearSearchResults, changeSearchResultById } from '../searchPanel/action';
-import { getSearchResultById } from '../entities/searchResults';
+import { clearSearchResults, changeSearchResultByCid } from '../searchPanel/action';
+import { getSearchResultByCid } from '../entities/searchResults';
 
 export const clearError = () => ({
   type: actionTypes.clearError,
@@ -120,28 +120,28 @@ export const fetchSubscriptions = () => (dispatch) => {
   return dispatch(createFetchSubscriptions(url.fetchSubscriptions()));
 };
 
-export const clearSubscriptionById = id => ({
-  type: actionTypes.clearSubscriptionById,
-  payload: id,
+export const clearSubscriptionByCid = cid => ({
+  type: actionTypes.clearSubscriptionByCid,
+  payload: cid,
 });
 
 export const clearSubscriptions = () => ({
   type: actionTypes.clearSubscriptions,
 });
 
-export const unsubscribe = id => (dispatch, getState) => {
+export const unsubscribe = cid => (dispatch, getState) => {
   const createUnsubscribe = getAysncActionCreator(
     DELETE,
     actionTypes.unsubscribe,
   );
-  return dispatch(createUnsubscribe(url.unsubscribe(id)))
+  return dispatch(createUnsubscribe(url.unsubscribe(cid)))
     .then(() => {
-      dispatch(fetchCategory(id)); // 重新获取分类数据
-      dispatch(clearSubscriptionById(id)); // 清除当前订阅
+      dispatch(fetchCategory(cid)); // 重新获取分类数据
+      dispatch(clearSubscriptionByCid(cid)); // 清除当前订阅
       // 同步更新searchPanel里的搜索结果
-      dispatch(changeSearchResultById(id, {
+      dispatch(changeSearchResultByCid(cid, {
         subscribed: false,
-        subscribers: getSearchResultById(getState(), id).subscribers - 1,
+        subscribers: getSearchResultByCid(getState(), cid).subscribers - 1,
       }));
     });
 };

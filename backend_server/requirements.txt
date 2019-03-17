@@ -1,3 +1,8 @@
 python-jsonrpc
 pymongo
 pika
+newsapi-python
+newspaper3k
+redis
+sklearn
+moment

@@ -5,9 +5,9 @@ export default {
   deleteNotice: id => `/v1/notices/${id}`, // DELETE
   fetchSubscriptions: () => '/v1/subscriptions', // GET
   subscribe: () => '/v1/subscriptions', // POST
-  unsubscribe: id => `/v1/subscriptions/${id}`, // DELETE
+  unsubscribe: cid => `/v1/subscriptions/${cid}`, // DELETE
   fetchSearchResults: searchQuery => `/v1/search${searchQuery}`, // GET
-  fetchCategory: id => `/v1/category?cid=${id}`, // GET 根据query cid来判断是哪个分类的数据
+  fetchCategory: cid => `/v1/category?cid=${cid}`, // GET 根据query cid来判断是哪个分类的数据
   fetchCategoryNewsList: () => '/v1/categoryNews', // GET 根据query cid来判断取哪个分类的新闻
   fetchFeedNewsList: () => '/v1/feedNews', // GET 根据query feed来判断取哪个推送栏目的新闻
   fetchVotedNewsList: () => '/v1/votedNews', // GET 根据query v来判断取的是upvoted还是downvoted

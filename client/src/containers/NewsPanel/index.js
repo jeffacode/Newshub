@@ -80,8 +80,8 @@ class NewsPanel extends Component {
       fetchCategory(cid)
         .then(({ data: { category } }) => {
           if (category) {
-            const { id, icon } = category;
-            setNavigatorBar(icon, `c/${id}`); // 设置导航栏内容
+            const { icon } = category;
+            setNavigatorBar(icon, `c/${cid}`); // 设置导航栏内容
           } else {
             // 如果此分类不存在就跳到404
             history.push('/404');
@@ -180,8 +180,8 @@ class NewsPanel extends Component {
       clearNewsList(); // 必须先清除新闻数据
       fetchCategory(cid)
         .then(({ data: { category } }) => {
-          const { id, icon } = category;
-          setNavigatorBar(icon, `c/${id}`);
+          const { icon } = category;
+          setNavigatorBar(icon, `c/${cid}`);
         });
       fetchCategoryNewsList({
         cid,

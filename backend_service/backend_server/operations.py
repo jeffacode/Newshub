@@ -267,10 +267,11 @@ def fetchFeedNewsList(user_id, feed, page, time, popularity):
 
         # 返回当前用户订阅的所有主题的新闻数据
         if feed == 'home':
-            pipeline = match(time, {'user_id': user_id}) + \
+            pipeline = [{'$match' : {'user_id': user_id}}] + \
                 lookup(NEWS_TABLE_NAME, 'topic_id', 'topic_id', 'news') + \
                 unwind('$news') + \
                 replaceRoot('$news') + \
+                match(time) + \
                 sort(popularity) + \
                 paginate(page)
             page_data = list(
@@ -436,7 +437,7 @@ def sendClickLog(user_id, news_id):
 
         message = {'user_id': user_id, 'news_id': news_id,
                    'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')}
-                   
+
         click_logs_queue_client.sendMessage(message)
 
         # 在mongo中保留log

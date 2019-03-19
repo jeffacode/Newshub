@@ -14,7 +14,6 @@ var VERSION = 'v' + config.version;
 var CLIENT_BUILD_DIR = path.resolve(__dirname, '../client/build');
 var CLIENT_OUTPUT_PATH = path.join(CLIENT_BUILD_DIR, VERSION);
 
-var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
 var apiRouterV1 = require('./routes/api_v1');
 
@@ -39,9 +38,12 @@ app.use(passport.initialize());
 passport.use('local-signup', localSignupStrategy);
 passport.use('local-login', localLoginStrategy);
 
-app.use('/', indexRouter);
-app.use('/auth', authRouter);
+
 app.use('/v1', apiRouterV1);
+app.use('/auth', authRouter);
+app.get('*', function (request, response){
+  response.sendFile(path.resolve(CLIENT_OUTPUT_PATH, 'index.html'))
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

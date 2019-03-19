@@ -3,4 +3,3 @@ __pycache__
 */data/glove.6B
 */model
 *.pyc
-*/dump.rdb

@@ -1,6 +1,6 @@
 news_topics = [
     'World',
-    'U.S.',
+    'US',
     'Business',
     'Technology',
     'Entertainment',

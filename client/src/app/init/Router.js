@@ -11,9 +11,6 @@ import Locale from 'utils/Locale';
 import appConfig from '../config/appConfig';
 import { unauthorizedRoutes, authorizedRoutes } from '../config/routes';
 
-const locale = Locale.getLocale(); // 从本地存储中取出locale
-const { localeMap } = appConfig;
-
 class Router extends Component {
   createRedirectRoute = ({ path, redirect }) => (
     <Route
@@ -77,6 +74,10 @@ class Router extends Component {
 
   render() {
     const { history } = this.props;
+    // 从本地存储中取出locale，这一步必须在react生命周期里完成
+    const locale = Locale.getLocale();
+    const { localeMap } = appConfig;
+
     return (
       <ConnectedRouter history={history}>
         <IntlProvider

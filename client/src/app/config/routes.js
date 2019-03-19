@@ -45,7 +45,7 @@ export const authorizedRoutes = [
     redirect: '/login',
   },
   {
-    path: '/c/:tid',
+    path: '/c/:topicIdFromRoute',
     component: NewsPanel,
     redirect: '/login',
   },

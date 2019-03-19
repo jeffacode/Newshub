@@ -42,11 +42,11 @@ class NewsPanel extends Component {
   constructor(props) {
     super(props);
     const {
-      match: { params: { tid, profile } },
+      match: { params: { topicIdFromRoute, profile } },
     } = props;
     this.myRef = React.createRef();
     this.state = {
-      tid,
+      topicIdFromRoute,
       profile,
       selectedView: views[0],
       selectedTime: times[2],
@@ -69,59 +69,72 @@ class NewsPanel extends Component {
       fetchHiddenNewsList,
       clearNewsList,
       history,
-      match: { params: { tid, username, profile } },
+      match: { params: { topicIdFromRoute, username, profile } },
       location: { pathname, hash },
     } = this.props;
 
-    clearNewsList(); // 清除新闻数据
+    // 清除新闻数据
+    clearNewsList();
 
-    // 如果在新闻分类页
-    if (tid) {
-      // 获取当前分类数据
-      fetchTopic(tid)
+    // 如果在新闻主题页
+    if (topicIdFromRoute) {
+      // 获取当前主题数据
+      fetchTopic(topicIdFromRoute)
         .then(({ data: { topic } }) => {
           if (topic) {
+            // 设置导航栏内容
             const { icon } = topic;
-            setNavigatorBar(icon, `c/${tid}`); // 设置导航栏内容
+            setNavigatorBar(icon, `c/${topicIdFromRoute}`);
           } else {
-            // 如果此分类不存在就跳到404
+            // 如果此主题不存在就跳到404
             history.push('/404');
           }
         });
-      // 获取当前分类下的所有新闻数据
+
+      // 获取当前主题下的所有新闻数据
       fetchTopicNewsList({
-        tid,
+        tid: topicIdFromRoute,
+        page: hash ? getPageFromHash(hash) : 1,
         t: selectedTime.id,
         p: selectedPopularity.id,
-        page: hash ? getPageFromHash(hash) : 1,
       });
     }
 
     // 如果在用户档案页
     if (profile) {
-      setNavigatorBar('user', `u/${username}`); // 设置导航栏内容
+      // 设置导航栏内容
+      setNavigatorBar('user', `u/${username}`);
+
       // 获取不同档案页的新闻数据
       switch (profile) {
         case 'upvoted':
           fetchVotedNewsList({
             v: 1,
             page: hash ? getPageFromHash(hash) : 1,
+            t: selectedTime.id,
+            p: selectedPopularity.id,
           });
           break;
         case 'downvoted':
           fetchVotedNewsList({
             v: -1,
             page: hash ? getPageFromHash(hash) : 1,
+            t: selectedTime.id,
+            p: selectedPopularity.id,
           });
           break;
         case 'saved':
           fetchSavedNewsList({
             page: hash ? getPageFromHash(hash) : 1,
+            t: selectedTime.id,
+            p: selectedPopularity.id,
           });
           break;
         case 'hidden':
           fetchHiddenNewsList({
             page: hash ? getPageFromHash(hash) : 1,
+            t: selectedTime.id,
+            p: selectedPopularity.id,
           });
           break;
         default:
@@ -135,10 +148,13 @@ class NewsPanel extends Component {
       case '/home':
         // 设置导航栏内容
         setNavigatorBar(feeds[0].icon, feeds[0].id);
+
         // 获取当前推送栏目的新闻数据
         fetchFeedNewsList({
           feed: 'home',
           page: hash ? getPageFromHash(hash) : 1,
+          t: selectedTime.id,
+          p: selectedPopularity.id,
         });
         break;
       case '/popular':
@@ -146,6 +162,8 @@ class NewsPanel extends Component {
         fetchFeedNewsList({
           feed: 'popular',
           page: hash ? getPageFromHash(hash) : 1,
+          t: selectedTime.id,
+          p: selectedPopularity.id,
         });
         break;
       case '/all':
@@ -153,6 +171,8 @@ class NewsPanel extends Component {
         fetchFeedNewsList({
           feed: 'all',
           page: hash ? getPageFromHash(hash) : 1,
+          t: selectedTime.id,
+          p: selectedPopularity.id,
         });
         break;
       default:
@@ -172,55 +192,75 @@ class NewsPanel extends Component {
       fetchHiddenNewsList,
       setNavigatorBar,
       clearNewsList,
-      match: { params: { tid, profile } },
+      history,
+      match: { params: { topicIdFromRoute, profile } },
       location: { hash },
     } = nextProps;
 
-    // 如果在新闻分类页
-    if (tid !== prevState.tid) {
-      clearNewsList(); // 必须先清除新闻数据
-      fetchTopic(tid)
+    // 如果在新闻主题页
+    if (topicIdFromRoute !== prevState.topicIdFromRoute) {
+      // 必须先清除新闻数据
+      clearNewsList();
+
+      fetchTopic(topicIdFromRoute)
         .then(({ data: { topic } }) => {
-          const { icon } = topic;
-          setNavigatorBar(icon, `c/${tid}`);
+          if (topic) {
+            const { icon } = topic;
+            setNavigatorBar(icon, `c/${topicIdFromRoute}`);
+          } else {
+            history.push('/404');
+          }
         });
+
       fetchTopicNewsList({
-        tid,
+        tid: topicIdFromRoute,
+        page: hash ? getPageFromHash(hash) : 1,
         t: selectedTime.id,
         p: selectedPopularity.id,
-        page: hash ? getPageFromHash(hash) : 1,
       });
-      return { tid };
+
+      return { topicIdFromRoute };
     }
 
     // 如果在用户档案页
     if (profile !== prevState.profile) {
-      clearNewsList(); // 必须先清除新闻数据
+      // 必须先清除新闻数据
+      clearNewsList();
+
       switch (profile) {
         case 'upvoted':
           fetchVotedNewsList({
             v: 1,
             page: hash ? getPageFromHash(hash) : 1,
+            t: selectedTime.id,
+            p: selectedPopularity.id,
           });
           break;
         case 'downvoted':
           fetchVotedNewsList({
             v: -1,
             page: hash ? getPageFromHash(hash) : 1,
+            t: selectedTime.id,
+            p: selectedPopularity.id,
           });
           break;
         case 'saved':
           fetchSavedNewsList({
             page: hash ? getPageFromHash(hash) : 1,
+            t: selectedTime.id,
+            p: selectedPopularity.id,
           });
           break;
         case 'hidden':
           fetchHiddenNewsList({
             page: hash ? getPageFromHash(hash) : 1,
+            t: selectedTime.id,
+            p: selectedPopularity.id,
           });
           break;
         default:
       }
+
       return { profile };
     }
 
@@ -236,23 +276,100 @@ class NewsPanel extends Component {
   selectTime = (time) => {
     const { selectedPopularity } = this.state;
     const {
+      setNavigatorBar,
       fetchTopicNewsList,
+      fetchFeedNewsList,
+      fetchVotedNewsList,
+      fetchSavedNewsList,
+      fetchHiddenNewsList,
       clearNewsList,
-      match: { params: { tid } },
-      location: { hash },
+      match: { params: { topicIdFromRoute, profile } },
+      location: { pathname },
     } = this.props;
+
     this.setState({
       selectedTime: time,
     }, () => {
-      // 如果在新闻分类页
-      if (tid) {
-        clearNewsList(); // 必须先清除新闻数据
+      // 必须先清除新闻数据
+      clearNewsList();
+
+      // 如果在新闻主题页
+      if (topicIdFromRoute) {
         fetchTopicNewsList({
-          tid,
+          tid: topicIdFromRoute,
+          page: 1,
           t: time.id,
           p: selectedPopularity.id,
-          page: hash ? getPageFromHash(hash) : 1,
         });
+      }
+
+      // 如果在用户档案页
+      if (profile) {
+        // 获取不同档案页的新闻数据
+        switch (profile) {
+          case 'upvoted':
+            fetchVotedNewsList({
+              v: 1,
+              page: 1,
+              t: time.id,
+              p: selectedPopularity.id,
+            });
+            break;
+          case 'downvoted':
+            fetchVotedNewsList({
+              v: -1,
+              page: 1,
+              t: time.id,
+              p: selectedPopularity.id,
+            });
+            break;
+          case 'saved':
+            fetchSavedNewsList({
+              page: 1,
+              t: time.id,
+              p: selectedPopularity.id,
+            });
+            break;
+          case 'hidden':
+            fetchHiddenNewsList({
+              page: 1,
+              t: time.id,
+              p: selectedPopularity.id,
+            });
+            break;
+          default:
+        }
+      }
+
+      // 如果在新闻推送页
+      switch (pathname) {
+        case '/home':
+          fetchFeedNewsList({
+            feed: 'home',
+            page: 1,
+            t: time.id,
+            p: selectedPopularity.id,
+          });
+          break;
+        case '/popular':
+          setNavigatorBar(feeds[1].icon, feeds[1].id);
+          fetchFeedNewsList({
+            feed: 'popular',
+            page: 1,
+            t: time.id,
+            p: selectedPopularity.id,
+          });
+          break;
+        case '/all':
+          setNavigatorBar(feeds[2].icon, feeds[2].id);
+          fetchFeedNewsList({
+            feed: 'all',
+            page: 1,
+            t: time.id,
+            p: selectedPopularity.id,
+          });
+          break;
+        default:
       }
     });
   }
@@ -260,22 +377,100 @@ class NewsPanel extends Component {
   selectPopularity = (popularity) => {
     const { selectedTime } = this.state;
     const {
+      setNavigatorBar,
       fetchTopicNewsList,
+      fetchFeedNewsList,
+      fetchVotedNewsList,
+      fetchSavedNewsList,
+      fetchHiddenNewsList,
       clearNewsList,
-      match: { params: { tid } },
-      location: { hash },
+      match: { params: { topicIdFromRoute, profile } },
+      location: { pathname },
     } = this.props;
+
     this.setState({
       selectedPopularity: popularity,
     }, () => {
-      if (tid) {
-        clearNewsList();
+      // 必须先清除新闻数据
+      clearNewsList();
+
+      // 如果在新闻主题页
+      if (topicIdFromRoute) {
         fetchTopicNewsList({
-          tid,
+          tid: topicIdFromRoute,
+          page: 1,
           t: selectedTime.id,
           p: popularity.id,
-          page: hash ? getPageFromHash(hash) : 1,
         });
+      }
+
+      // 如果在用户档案页
+      if (profile) {
+        // 获取不同档案页的新闻数据
+        switch (profile) {
+          case 'upvoted':
+            fetchVotedNewsList({
+              v: 1,
+              page: 1,
+              t: selectedTime.id,
+              p: popularity.id,
+            });
+            break;
+          case 'downvoted':
+            fetchVotedNewsList({
+              v: -1,
+              page: 1,
+              t: selectedTime.id,
+              p: popularity.id,
+            });
+            break;
+          case 'saved':
+            fetchSavedNewsList({
+              page: 1,
+              t: selectedTime.id,
+              p: popularity.id,
+            });
+            break;
+          case 'hidden':
+            fetchHiddenNewsList({
+              page: 1,
+              t: selectedTime.id,
+              p: popularity.id,
+            });
+            break;
+          default:
+        }
+      }
+
+      // 如果在新闻推送页
+      switch (pathname) {
+        case '/home':
+          fetchFeedNewsList({
+            feed: 'home',
+            page: 1,
+            t: selectedTime.id,
+            p: popularity.id,
+          });
+          break;
+        case '/popular':
+          setNavigatorBar(feeds[1].icon, feeds[1].id);
+          fetchFeedNewsList({
+            feed: 'popular',
+            page: 1,
+            t: selectedTime.id,
+            p: popularity.id,
+          });
+          break;
+        case '/all':
+          setNavigatorBar(feeds[2].icon, feeds[2].id);
+          fetchFeedNewsList({
+            feed: 'all',
+            page: 1,
+            t: selectedTime.id,
+            p: popularity.id,
+          });
+          break;
+        default:
       }
     });
   }
@@ -294,7 +489,7 @@ class NewsPanel extends Component {
       fetchHiddenNewsList,
       changePage,
       history,
-      match: { params: { tid, profile } },
+      match: { params: { topicIdFromRoute, profile } },
       location: { pathname },
     } = this.props;
     // 页面滚动到最上方
@@ -306,15 +501,16 @@ class NewsPanel extends Component {
     } else {
       history.push(`${pathname}#${currentPage}`);
     }
+
     // 当前页不存在才获取增量数据
     if (historyPages.indexOf(currentPage) === -1) {
-      // 如果在新闻分类页
-      if (tid) {
+      // 如果在新闻主题页
+      if (topicIdFromRoute) {
         fetchTopicNewsList({
-          tid,
+          tid: topicIdFromRoute,
+          page: currentPage,
           t: selectedTime.id,
           p: selectedPopularity.id,
-          page: currentPage,
         });
       }
 
@@ -325,22 +521,30 @@ class NewsPanel extends Component {
             fetchVotedNewsList({
               v: 1,
               page: currentPage,
+              t: selectedTime.id,
+              p: selectedPopularity.id,
             });
             break;
           case 'downvoted':
             fetchVotedNewsList({
               v: -1,
               page: currentPage,
+              t: selectedTime.id,
+              p: selectedPopularity.id,
             });
             break;
           case 'saved':
             fetchSavedNewsList({
               page: currentPage,
+              t: selectedTime.id,
+              p: selectedPopularity.id,
             });
             break;
           case 'hidden':
             fetchHiddenNewsList({
               page: currentPage,
+              t: selectedTime.id,
+              p: selectedPopularity.id,
             });
             break;
           default:
@@ -353,18 +557,24 @@ class NewsPanel extends Component {
           fetchFeedNewsList({
             feed: 'home',
             page: currentPage,
+            t: selectedTime.id,
+            p: selectedPopularity.id,
           });
           break;
         case '/popular':
           fetchFeedNewsList({
             feed: 'popular',
             page: currentPage,
+            t: selectedTime.id,
+            p: selectedPopularity.id,
           });
           break;
         case '/all':
           fetchFeedNewsList({
             feed: 'all',
             page: currentPage,
+            t: selectedTime.id,
+            p: selectedPopularity.id,
           });
           break;
         default:
@@ -387,7 +597,7 @@ class NewsPanel extends Component {
       sendClickLog,
       intl,
       history,
-      match: { params: { tid } },
+      match: { params: { topicIdFromRoute } },
       location: { pathname },
     } = this.props;
     const {
@@ -401,7 +611,7 @@ class NewsPanel extends Component {
     return (
       <div className="newsPanel" ref={this.myRef}>
         <NewsHeader
-          tid={tid}
+          topicIdFromRoute={topicIdFromRoute}
           topic={topic}
           selectedView={selectedView}
           selectedTime={selectedTime}
@@ -414,8 +624,8 @@ class NewsPanel extends Component {
         {map(newsListByPage, (news) => {
           const { id, hidden } = news;
 
-          // 在新闻分类页且已隐藏时不显示
-          if (tid && hidden) {
+          // 在新闻主题页且已隐藏时不显示
+          if (topicIdFromRoute && hidden) {
             return null;
           }
 
@@ -431,6 +641,7 @@ class NewsPanel extends Component {
           return (
             <NewsItem
               key={id}
+              topicIdFromRoute={topicIdFromRoute}
               view={selectedView}
               news={news}
               voteNews={voteNews}

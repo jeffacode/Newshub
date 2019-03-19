@@ -1,4 +1,4 @@
-import news_scraper as scraper
+import .news_scraper as scraper
 
 EXPECTED_STRING = "At least 49 people have been killed, and 20 seriously injured, after mass shootings at two mosques in the New Zealand city of Christchurch."
 URL = "http://us.cnn.com/asia/live-news/new-zealand-christchurch-shooting-intl/index.html"

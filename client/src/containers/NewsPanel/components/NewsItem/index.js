@@ -317,15 +317,20 @@ class NewsItem extends Component {
 
   onTagClick = (e) => {
     e.stopPropagation();
-    const { news: { top_id: tid }, history } = this.props;
+    const { news: { topic_id: tid }, history } = this.props;
     history.push(`/c/${tid}`);
   }
 
   renderRightContentWithCardView = () => {
-    const { news, intl } = this.props;
+    const {
+      topicIdFromRoute,
+      news,
+      intl,
+    } = this.props;
     const {
       id,
-      top_id: tid,
+      topic_id: tid,
+      recommended,
       source,
       title,
       description,
@@ -339,6 +344,11 @@ class NewsItem extends Component {
       <div className="newsItem__rightContent">
         <div className="newsItem__source">
           <Tag color="#108ee9" onClick={this.onTagClick}>{tid}</Tag>
+          {(recommended && recommended !== topicIdFromRoute) && (
+            <Tag color="#52c41a" onClick={this.onTagClick}>
+              {intl.formatMessage({ id: 'newsItem_recommended' })}
+            </Tag>
+          )}
           {source}
         </div>
         <h2 className="newsItem__title ft-bold">{title}</h2>
@@ -497,6 +507,7 @@ class NewsItem extends Component {
 }
 
 NewsItem.propTypes = {
+  topicIdFromRoute: PropTypes.string,
   view: PropTypes.object.isRequired,
   news: PropTypes.object.isRequired,
   voteNews: PropTypes.func.isRequired,
@@ -505,6 +516,10 @@ NewsItem.propTypes = {
   sendClickLog: PropTypes.func.isRequired,
   intl: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
+};
+
+NewsItem.defaultProps = {
+  topicIdFromRoute: '',
 };
 
 export default NewsItem;

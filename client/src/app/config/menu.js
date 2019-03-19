@@ -39,10 +39,6 @@ export const getUserSettingsMenu = () => [
         path: 'connect-accounts',
       },
       {
-        name: 'userSettings_beta_tests',
-        path: 'beta-tests',
-      },
-      {
         name: 'userSettings_deactivate_account',
         path: 'deactivate-account',
       },

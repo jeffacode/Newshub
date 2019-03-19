@@ -10,6 +10,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 
 from cloudAMQP_client import CloudAMQPClient
 import mongodb_client
+import news_topic_modeling_client
 
 DEDUPE_NEWS_TASK_QUEUE_URL = 'amqp://rdisyaqq:by5EeV8qAdbjsDOh56T8p2N2tMdM6oxD@dinosaur.rmq.cloudamqp.com/rdisyaqq'
 DEDUPE_NEWS_TASK_QUEUE_NAME = 'newshub-dedupe-news-task-queue'
@@ -61,15 +62,29 @@ def handle_message(msg):
     task['votes'] = 0
     task['upvotes'] = 0
     task['downvotes'] = 0
+
+    # 打主题标签
+    try:
+        description = task['description']
+        if description is None:
+            description = task['title']
+        task['topic_id'] = news_topic_modeling_client.classify(description)
+    except Exception as e:
+        print(e)
+
     db[NEWS_TABLE_NAME].replace_one({'digest': task['digest']}, task, upsert=True)
     print('[o]Not duplicated news. Saved.')
 
-print('[local time: %s]News deduper starts.' % moment.now().format("YYYY-M-D H:M"))
-try:
-    while dedupe_news_queue_client is not None:
-        msg = dedupe_news_queue_client.getMessage()
-        handle_message(msg)
-        dedupe_news_queue_client.sleep(SLEEP_TIME_IN_SECONDS)
-except Exception as e:
-    print('[local time: %s]News deduper ends.' % moment.now().format("YYYY-M-D H:M"))
-    print(e)
+def run():
+    print('[local time: %s]News deduper starts.' % moment.now().format('YYYY-M-D H:M'))
+    try:
+        while dedupe_news_queue_client is not None:
+            msg = dedupe_news_queue_client.getMessage()
+            handle_message(msg)
+            dedupe_news_queue_client.sleep(SLEEP_TIME_IN_SECONDS)
+    except Exception as e:
+        print('[local time: %s]News deduper ends.' % moment.now().format('YYYY-M-D H:M'))
+        print(e)
+
+if __name__ == '__main__':
+    run()

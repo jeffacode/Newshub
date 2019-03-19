@@ -133,14 +133,14 @@ class NewsHeader extends Component {
   }
 
   render() {
-    const { tid, topic: { id, icon, subscribers }, intl } = this.props;
+    const { topicIdFromRoute, topic: { icon, subscribers }, intl } = this.props;
     return (
       <div className="newsHeader">
         {
-          tid && (
+          topicIdFromRoute && (
             <div className="newsHeader__content">
               <Icon type={icon || 'robot'} className="newsHeader__icon" />
-              <div className="newsHeader__title">{id}</div>
+              <div className="newsHeader__title">{topicIdFromRoute}</div>
               <div className="newsHeader__subscribers">
                 {`${formatNumber(subscribers)} `}
                 {intl.formatMessage({ id: 'subscribers_count' })}
@@ -158,7 +158,7 @@ class NewsHeader extends Component {
 }
 
 NewsHeader.propTypes = {
-  tid: PropTypes.string,
+  topicIdFromRoute: PropTypes.string,
   topic: PropTypes.object.isRequired,
   selectedView: PropTypes.object.isRequired,
   selectedTime: PropTypes.object.isRequired,
@@ -170,7 +170,7 @@ NewsHeader.propTypes = {
 };
 
 NewsHeader.defaultProps = {
-  tid: '',
+  topicIdFromRoute: '',
 };
 
 export default NewsHeader;

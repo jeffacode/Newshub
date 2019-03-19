@@ -41,12 +41,16 @@ def handle_message(msg):
         dedupe_news_queue_client.sendMessage(task)  # 爬取内容成功后再将新闻数据发送到dedupe news queue
 
 
-print('[local time: %s]News fetcher starts.' % moment.now().format("YYYY-M-D H:M"))
-try:
-    while scrape_news_queue_client is not None:
-        msg = scrape_news_queue_client.getMessage()
-        handle_message(msg)
-        scrape_news_queue_client.sleep(SLEEP_TIME_IN_SECONDS)
-except Exception as e:
-    print('[local time: %s]News fetcher ends.' % moment.now().format("YYYY-M-D H:M"))
-    print(e)
+def run():
+    print('[local time: %s]News fetcher starts.' % moment.now().format('YYYY-M-D H:M'))
+    try:
+        while scrape_news_queue_client is not None:
+            msg = scrape_news_queue_client.getMessage()
+            handle_message(msg)
+            scrape_news_queue_client.sleep(SLEEP_TIME_IN_SECONDS)
+    except Exception as e:
+        print('[local time: %s]News fetcher ends.' % moment.now().format('YYYY-M-D H:M'))
+        print(e)
+
+if __name__ == '__main__':
+    run()

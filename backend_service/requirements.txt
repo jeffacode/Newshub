@@ -1,0 +1,16 @@
+werkzeug
+json-rpc
+pymongo
+redis
+moment
+pika
+newsapi-python
+newspaper3k
+numpy
+scipy
+pandas
+matplotlib
+sklearn
+jupyter
+tensorflow
+nltk

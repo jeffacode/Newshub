@@ -136,7 +136,7 @@ export const unsubscribe = tid => (dispatch, getState) => {
   );
   return dispatch(createUnsubscribe(url.unsubscribe(tid)))
     .then(() => {
-      dispatch(fetchTopic(tid)); // 重新获取分类数据
+      dispatch(fetchTopic(tid)); // 重新获取主题数据
       dispatch(clearSubscriptionByTid(tid)); // 清除当前订阅
       // 同步更新searchPanel里的搜索结果
       dispatch(changeSearchResultByTid(tid, {

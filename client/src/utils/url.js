@@ -7,8 +7,8 @@ export default {
   subscribe: () => '/v1/subscriptions', // POST
   unsubscribe: tid => `/v1/subscriptions/${tid}`, // DELETE
   fetchSearchResults: searchQuery => `/v1/search${searchQuery}`, // GET
-  fetchTopic: tid => `/v1/topic?tid=${tid}`, // GET 根据query tid来判断是哪个分类的数据
-  fetchTopicNewsList: () => '/v1/topicNews', // GET 根据query tid来判断取哪个分类的新闻
+  fetchTopic: tid => `/v1/topic?tid=${tid}`, // GET 根据query tid来判断是哪个主题的数据
+  fetchTopicNewsList: () => '/v1/topicNews', // GET 根据query tid来判断取哪个主题的新闻
   fetchFeedNewsList: () => '/v1/feedNews', // GET 根据query feed来判断取哪个推送栏目的新闻
   fetchVotedNewsList: () => '/v1/votedNews', // GET 根据query v来判断取的是upvoted还是downvoted
   fetchSavedNewsList: () => '/v1/savedNews', // GET

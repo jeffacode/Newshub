@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import moment
 
-
 def getTimeStrategy(time):
     utcnow = moment.utcnow()
     if time == 'hour': return {'publishedAt': {'$gt': utcnow.subtract(hours=1).date}}

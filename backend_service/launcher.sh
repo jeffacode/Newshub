@@ -5,7 +5,10 @@ mongod
 
 pip install -r requirements.txt
 
-cd news_pipeline
+cd backend_server
+python3 backend_server.py
+
+cd ../news_pipeline_service
 python3 news_monitor.py
 python3 news_fetcher.py
 python3 news_deduper.py

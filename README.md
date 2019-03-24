@@ -3,11 +3,11 @@
 
 ## 功能
 
-  - Front-End：新闻收藏/隐藏/赞同/反对，视图切换，排序组合，记录搜索历史，中英文切换，消息通知
+  - Front-End：新闻收藏/隐藏/赞同/反对，视图切换，排序组合，分页缓存，记录搜索历史，中英文切换，消息通知
 
   - Web Server：基于JWT的登录注册
 
-  - Back-End Server：新闻监测/爬取/去重，点击偏好模型，新闻主题模型
+  - Back-End Service：RPC Server，新闻监测/爬取/去重，点击偏好模型，新闻主题模型
   
 ![image](https://github.com/jeffacode/Newshub/blob/master/pngs/%E7%BB%93%E6%9E%84.png)
 
